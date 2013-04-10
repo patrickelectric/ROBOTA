@@ -92,3 +92,26 @@ int RX24::setServoMoveSpeed(unsigned char ID, unsigned char moveSpeed){
   //return readError();  
   return 0;
 }
+
+
+//-----------------------------------------------------------------   
+int RX24::resetToFactoryDefault(unsigned char ID)
+{
+  unsigned int TChecksum = (ID + 0x02 + RX_RESET);
+  while ( TChecksum >= 255){            
+    TChecksum -= 255;     
+  }
+  unsigned int Checksum = 255 - TChecksum;
+    
+  //digitalWrite(controlPin,HIGH);      // Set Tx Mode
+  serialport_writebyte(RX_START);                 // Send Instructions over Serial1
+  serialport_writebyte(RX_START);
+  serialport_writebyte(ID);
+  serialport_writebyte(0x02);
+  serialport_writebyte(RX_RESET);
+  serialport_writebyte(Checksum);
+  usleep(TX_DELAY_TIME);
+  //digitalWrite(controlPin,LOW);       // Set Rx Mode  
+  //return readError();         
+  return 0;
+} 

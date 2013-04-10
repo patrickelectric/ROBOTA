@@ -20,7 +20,6 @@
 #include <fcntl.h>    /* File control definitions */
 #include <errno.h>    /* Error number definitions */
 #include <termios.h>  /* POSIX terminal control definitions */
-#define TRUE 1;
 #include "serial.h"   /* lib for serial comunication */
 #include "protocolVals.h"  /* Protocol values to servo comunication  */
 #include "protocolFunct.h"  /* Protocol functions to servo comunication  */
