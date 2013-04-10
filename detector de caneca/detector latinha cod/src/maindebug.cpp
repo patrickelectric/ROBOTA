@@ -89,14 +89,14 @@ int main(int argc, char *argv[])
     bool erro_data=false;
     for (int i = 0; i < 7; ++i)
     {
-        if(p[i]>230){ p[i]=230; erro_data=true;}
-        if(p[i]<26){ p[i]=26; erro_data=true;}
+        if(val[i]>230){ val[i]=230; erro_data=true;}
+        if(val[i]<26){ val[i]=26; erro_data=true;}
     }
     if(erro_data==true)
-        for (int i = 0; 3 < count; ++i)
+        for (int i = 0; i < 3; ++i)
         {
-            printf("EXISTE UM ERRO NO ARQUIVO .DAT, valores foram modificados para a estabilidade do programa!!")
-            sleep(1)   ;
+            printf("EXISTE UM ERRO NO ARQUIVO .DAT, valores foram modificados para a estabilidade do programa!!");
+            sleep(1);
         }
 
     val[0]=val[1]=val[2]=val[3]=val[4]=val[5]=val[6]=100;

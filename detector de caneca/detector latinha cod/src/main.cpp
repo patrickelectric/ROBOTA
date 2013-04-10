@@ -354,6 +354,7 @@ void *filter_leanalise (void *)
 
         printf("<<<<<<<<<<%d,%d,%d>>>>>>>>>>>.\n",localCan.x,localCan.y,localCan.erro );
         drawCross ( cvPoint(localCan.x,localCan.y),Scalar(0,0,255), 20, copyFrame);
+        desenha_seta(copyFrame, cvPoint(copyFrame.rows,copyFrame.cols/2) , cvPoint(localCan.x,localCan.y) ,cinza);
 
 
         /* logica para seguir a caneca */
@@ -384,7 +385,7 @@ void *filter_leanalise (void *)
     
 
         /* mostra o resultado do local da caneca */
-        namedWindow("resposta", CV_WINDOW_FREERATIO);
+        //namedWindow("resposta", CV_WINDOW_FREERATIO);
         imshow("resposta",copyFrame);
         end_fps();
         waitKey(30);
