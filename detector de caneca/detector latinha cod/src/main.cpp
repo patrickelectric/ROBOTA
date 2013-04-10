@@ -9,7 +9,7 @@
 #-----------------------------------------------------------------------------
 #
 # Summary:     Cod to teste the can detector
-# Obs: To enter in debug mode put ./detector something
+# Obs: To enter in debug mode put ./debugador
 */
 
 //rgb e hsv funfando juntas os dois
@@ -174,23 +174,8 @@ infoImg lata_x(Mat image)
     for( int i = 0; i <(int) contours.size(); i++ )
     {
         mu[i] = moments( Mat(contours[i]), false );
-        /*
-        if(mu[i].m01/mu[i].m00 >0)
-            mc[i] = Point2i( mu[i].m10/mu[i].m00 , mu[i].m01/mu[i].m00);
-        */
     }
     
-
-    //cria os contornos na imagem de forma colorida para separar em modo debug visual
-    /*
-    RNG rng(12345);
-    for( int i = 0; i <(int) contours.size(); i++ )
-    {
-        Scalar color(  rng.uniform(0,255),  rng.uniform(0,255),  rng.uniform(0,255) );
-        drawContours( image, contours, i, color, CV_FILLED, 8, hierarchy );
-    }
-    */
-
     printf("<><><><><><><><><><><>\n");
 
 

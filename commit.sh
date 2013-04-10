@@ -3,5 +3,5 @@
 git add .
 git status
 echo ""
-echo "now u can type $ git commit something_cool"
+echo "now u can type $ git commit -m something_cool"
 echo "and $ git push origin master"

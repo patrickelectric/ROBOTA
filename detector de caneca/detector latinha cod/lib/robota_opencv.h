@@ -21,7 +21,17 @@
 using namespace cv;   // declara o namespaec cv::Mat
 
 
-// drawCross( center, color, d, drawing )  
+/************************************************/ 
+//start_fps();
+//end_fps();
+//drawCross( center, color, d, drawing )  
+void limpa_linha(int numero_de_linhas);
+void desenha_seta(Mat image, Point2f coco1, Point2f coco2,Scalar cor);
+struct infoImg;
+struct rgb;
+/************************************************/ 
+
+
 
 // limpa_linha(int numero_de_linhas);
 // desenha_seta(Mat image, Point2f coco1, Point2f coco2,Scalar cor);
