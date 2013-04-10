@@ -86,19 +86,35 @@ int main(int argc, char *argv[])
 	setInitParameters();
 
    	data.read(); /* read last data of rgb and hsv */
+    bool erro_data=false;
+    for (int i = 0; i < 7; ++i)
+    {
+        if(p[i]>230){ p[i]=230; erro_data=true;}
+        if(p[i]<26){ p[i]=26; erro_data=true;}
+    }
+    if(erro_data==true)
+        for (int i = 0; 3 < count; ++i)
+        {
+            printf("EXISTE UM ERRO NO ARQUIVO .DAT, valores foram modificados para a estabilidade do programa!!")
+            sleep(1)   ;
+        }
+
+    val[0]=val[1]=val[2]=val[3]=val[4]=val[5]=val[6]=100;
    	valtovalue();
 
     while(1)
     {
+        
 	    cap >> frame;
         end_fps();
 	    if(debugProgram==true)
 	    	data.write(val);
 		GaussianBlur(frame,frame,Size(11,11),0,0,BORDER_DEFAULT); /* gausian filter */
-
+        
 	   	showimg(frame,"original");
 	    takeOriginal_RgbTrack();
 		showimg(resposta_frame,"original2");
+
 
 	    cvtColor(frame,frame_hsv,CV_RGB2HSV);
 
@@ -106,15 +122,21 @@ int main(int argc, char *argv[])
 		takeHsv_RgbTrack();
 		showimg(resposta_hsv,"hsv2");
 
-		bitwise_and(resposta_hsv,resposta_frame,resposta_fh,Mat());
+
+		bitwise_and(resposta_hsv,resposta_frame,resposta_fh,Mat()); //--erroooo
 		localCan = lata_x(resposta_fh);
+
 		printf("<<<<<<<<<<%d,%d,%d>>>>>>>>>>>.\n",localCan.x,localCan.y,localCan.erro );
 		showimg(resposta_fh,"resposta");
-		showimg(frame,"OBJT");
+		imshow("OBJT",frame);
+        img=frame;
+        setMouseCallback("OBJT", onMouse, 0);
+        valtovalue();
 
 	    printfval();
-        system("clear");
+        //system("clear");
 		//limpa_linha(2);
+        
 
     }
 
@@ -132,15 +154,17 @@ void serialInfo()
 */
 /************************************************/
 
+/************************************************/  //my show image
 void showimg(Mat image, const string& windowName)
 {
     if (debugProgram==true)
     {
-    	namedWindow(windowName, CV_WINDOW_FREERATIO);
-    	imshow(windowName,image);
-    	waitKey(30);
+        namedWindow(windowName, CV_WINDOW_FREERATIO);
+        imshow(windowName,image);
+        waitKey(30);
     }
 }
+
 /************************************************/
 
 void takeOriginal_RgbTrack()

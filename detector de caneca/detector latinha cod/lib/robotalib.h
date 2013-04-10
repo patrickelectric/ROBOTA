@@ -12,8 +12,8 @@
 //#include "serial.h"
 #include <opencv/cv.h>
 #include <opencv/highgui.h>
-#include "robota_opencv.h"
 #include "robota_data.h"
+#include "robota_opencv.h"
 
 #include "serialArduino.h"
 #include "serialArduino.cpp"
