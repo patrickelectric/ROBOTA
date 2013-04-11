@@ -7,6 +7,7 @@
 #include <errno.h>    /* Error number definitions */
 #include <termios.h>  /* POSIX terminal control definitions */
 #include <pthread.h>
+#include <math.h>
 #include <time.h>
 
 //#include "serial.h"

@@ -354,7 +354,16 @@ void *filter_leanalise (void *)
 
         printf("<<<<<<<<<<%d,%d,%d>>>>>>>>>>>.\n",localCan.x,localCan.y,localCan.erro );
         drawCross ( cvPoint(localCan.x,localCan.y),Scalar(0,0,255), 20, copyFrame);
-        desenha_seta(copyFrame, cvPoint(copyFrame.rows,copyFrame.cols/2) , cvPoint(localCan.x,localCan.y) ,cinza);
+        desenha_seta(copyFrame, cvPoint(copyFrame.cols/2,copyFrame.rows) , cvPoint(localCan.x,localCan.y) ,cinza);
+        printf("ANGULO : %fº\n",atan((copyFrame.rows-localCan.y+0.0000000001)/(copyFrame.cols/2-localCan.x+0.0000000001))*180/pi);
+
+        float PW,PL;
+        
+        /*
+        # Para: Victor
+        # Aqui esta é o melhor lugar para trabalhar com isso, a melhor ideia seria uma function para fazer o calculo de PW e PL
+        # onde todos os dados ja estão prontos
+        */
 
 
         /* logica para seguir a caneca */
