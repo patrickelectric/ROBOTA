@@ -110,16 +110,16 @@ int main(int argc, char *argv[])
 	    	data.write(val);
 		GaussianBlur(frame,frame,Size(11,11),0,0,BORDER_DEFAULT); /* gausian filter */
         
-	   	showimg(frame,"original");
+	   	showimg(frame,"rgb");
 	    takeOriginal_RgbTrack();
-		showimg(resposta_frame,"original2");
+		showimg(resposta_frame,"rgb_filter");
 
 
 	    cvtColor(frame,frame_hsv,CV_RGB2HSV);
 
 	    showimg(frame_hsv,"hsv");
 		takeHsv_RgbTrack();
-		showimg(resposta_hsv,"hsv2");
+		showimg(resposta_hsv,"hsv_filter");
 
 
 		bitwise_and(resposta_hsv,resposta_frame,resposta_fh,Mat()); //--erroooo
