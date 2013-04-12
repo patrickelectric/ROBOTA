@@ -1,0 +1,147 @@
+/*
+#-----------------------------------------------------------------------------
+# Filename:    main.cpp
+#-----------------------------------------------------------------------------
+#      ___  ____  ___  ____  _________ 
+#     / _ \/ __ \/ _ )/ __ \/_  __/ _ |
+#    / , _/ /_/ / _  / /_/ / / / / __ |
+#   /_/|_|\____/____/\____/ /_/ /_/ |_|
+#-----------------------------------------------------------------------------
+#
+# Summary:     Cod to teste the can detector
+*/
+
+#include "../lib/robotalib.h"    /* the include file */
+
+using namespace cv;
+
+char programName[64]="main.cpp"; /* program name */
+Mat frame;
+Mat frame_hsv;
+Mat resposta_frame;
+Mat resposta_hsv;
+Mat resposta_fh;
+int colorRange =15;
+bool debugProgram=true;
+
+/********************FUNCTIONS*******************/
+void serialInfo();
+void videoStart();
+void takeOriginal_RgbTrack();
+void takeHsv_RgbTrack();
+void showimg(Mat image, const string& windowName);
+/********************FUNCTIONS*******************/
+
+rgb value; /*original*/
+rgb valueh; /*hsv*/
+
+/**********************MAIN**********************/
+int main(int argc, char *argv[])
+{
+    Serial.local_usb="/dev/ttyUSB0"; /* set variable of usb local*/
+    Serial.mensagem="";              /* make a empty msg */
+	
+    if(argc<2) printf("Foi escolhido debugProgram=false, ja que não foi colocado nenhum argumento\n");
+    else
+    {
+	if(argv[1]=='1')
+		debugProgram=true;
+	else
+		debugProgram=false;
+    }
+
+    if(argc<3) printf("Foi escolhido a porta /dev/ttyUSB0, ja que não foi colocado nenhum argumento\n");
+    else
+    {
+        Serial.local_usb=argv[2];
+        printf("\nPorta ""%s"" com o baudrate de %d\n\n",Serial.local_usb,Serial.baudrate);
+    }
+
+    serialInfo(); 					/* show some inf about serial comunication */
+    VideoCapture cap(0);				/* start video capture */
+    start_fps();
+
+	value.r=value.g=value.b=valueh.r=valueh.g=valueh.b=75;
+
+
+    while(1)
+    {
+    	cap >> frame;
+	GaussianBlur(frame,frame,Size(11,11),0,0,BORDER_DEFAULT); /* gausian filter */
+
+   	showimg(frame,"original");
+        takeOriginal_RgbTrack();
+	showimg(resposta_frame,"original2");
+
+        cvtColor(frame,frame_hsv,CV_RGB2HSV);
+
+        showimg(frame_hsv,"hsv");
+	takeHsv_RgbTrack();
+	showimg(resposta_hsv,"hsv2");
+
+//	compare(resposta_hsv,resposta_frame,resposta_fh,CMP_EQ);
+	bitwise_and(resposta_hsv,resposta_frame,resposta_fh,Mat());
+	showimg(resposta_fh,"resposta");
+
+        end_fps();
+	limpa_linha(1);
+
+    }
+
+}
+/**********************MAIN**********************/
+
+
+void serialInfo()
+{
+	printf("Para utilizar o programa: $ serial /dev/ttyUSB0 9600\n\n");
+    	printf("Foi escolhido a porta %s, com o baudrate de 9600\n\n",Serial.local_usb );
+	fd = serialport_init(Serial.local_usb, Serial.baudrate);
+	sleep(1);
+}
+
+void videoStart()
+{
+	VideoCapture cap(0);
+}
+
+void showimg(Mat image, const string& windowName)
+{
+    if (debugProgram==true)
+    {
+    	namedWindow(windowName, CV_WINDOW_FREERATIO);
+    	imshow(windowName,image);
+    	waitKey(30);
+    }
+}
+
+void takeOriginal_RgbTrack()
+{
+	Mat asw;
+	if(debugProgram==true)
+	{
+		createTrackbar("Red", "original", &value.r, 255);
+		createTrackbar("Green", "original", &value.g, 255);
+		createTrackbar("Blue", "original", &value.b, 255);
+	}
+
+	if((value.b>=colorRange && value.g>=colorRange && value.r>=colorRange)&&(value.b<=230 && value.g<=230 && value.r<=230))
+		inRange(frame, Scalar(value.b-25, value.g-25, value.r-25), Scalar(value.b+25, value.g+25, value.r+25), resposta_frame);
+	else resposta_frame=frame;
+
+}
+
+void takeHsv_RgbTrack()
+{
+	if(debugProgram==true)
+	{
+		createTrackbar("Red", "hsv", &valueh.r, 255);
+		createTrackbar("Green", "hsv", &valueh.g, 255);
+		createTrackbar("Blue", "hsv", &valueh.b, 255);
+	}
+
+	if((valueh.b>=25 && valueh.g>=25 && valueh.r>=25)&&(valueh.b<=230 && valueh.g<=230 && valueh.r<=230))
+		inRange(frame_hsv, Scalar(valueh.b-25, valueh.g-25, valueh.r-25), Scalar(valueh.b+25, valueh.g+25, valueh.r+25),resposta_hsv);
+	else resposta_hsv=frame_hsv;
+
+}
