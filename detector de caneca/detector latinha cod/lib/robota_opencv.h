@@ -149,7 +149,7 @@ void onMouse(int event, int x, int y, int flags, void* param)
     }
     else
         sprintf(text, "x=%d, y=%d", x, y);
-
-    putText(img2, text, Point(5,15), FONT_HERSHEY_PLAIN, 1.0, CV_RGB(0,255,0));
-    imshow("image2", img2);
+    printf("MOUSE: (%s)\n",text );
+    //putText(img2, text, Point(5,15), FONT_HERSHEY_PLAIN, 1.0, CV_RGB(0,255,0));
+    //imshow("image2", img2);
 }
