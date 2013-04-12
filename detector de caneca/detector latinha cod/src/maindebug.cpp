@@ -171,9 +171,9 @@ void takeOriginal_RgbTrack()
 	Mat asw;
 	if(debugProgram==true)
 	{
-		createTrackbar("Red", "original", &value.r, 255);
-		createTrackbar("Green", "original", &value.g, 255);
-		createTrackbar("Blue", "original", &value.b, 255);
+		createTrackbar("Red", "rgb", &value.r, 255);
+		createTrackbar("Green", "rgb", &value.g, 255);
+		createTrackbar("Blue", "rgb", &value.b, 255);
 		val[0]=value.r;
 		val[1]=value.g;
 		val[2]=value.b;

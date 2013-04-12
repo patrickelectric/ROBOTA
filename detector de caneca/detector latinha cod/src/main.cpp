@@ -355,7 +355,7 @@ void *filter_leanalise (void *)
         printf("<<<<<<<<<<%d,%d,%d>>>>>>>>>>>.\n",localCan.x,localCan.y,localCan.erro );
         drawCross ( cvPoint(localCan.x,localCan.y),Scalar(0,0,255), 20, copyFrame);
         desenha_seta(copyFrame, cvPoint(copyFrame.cols/2,copyFrame.rows) , cvPoint(localCan.x,localCan.y) ,cinza);
-        printf("ANGULO : %fº\n",atan((copyFrame.rows-localCan.y+0.0000000001)/(copyFrame.cols/2-localCan.x+0.0000000001))*180/pi);
+        printf("ANGULO : %fº\n",atan(-(copyFrame.cols/2-localCan.x+0.0000000001)/(copyFrame.rows-localCan.y+0.0000000001))*180/pi);
 
         float PW,PL;
         
