@@ -96,6 +96,9 @@ int main(int argc, char *argv[])
 	setInitParameters();            
 
    	data.read(); //le o results.dat
+    if(checkFile(file,fileName))
+        return 666;
+    
    	valtovalue();
 
     /********************************************/

@@ -81,12 +81,17 @@ int main(int argc, char *argv[])
     /************************************************/
 
     //serialInfo(); 					/* show some inf about serial comunication */
-    start_fps();					/* start fps */
+    start_fps();					    /* start fps */
 
 	setInitParameters();
 
    	data.read(); /* read last data of rgb and hsv */
     bool erro_data=false;
+    /*
+    if(checkFile(file,fileName))
+        for(int i;i<7;i++) val[i]=125;
+    */
+
     for (int i = 0; i < 6; ++i)
     {
         if(val[i]>230){  erro_data=true; printf("i: %d , val: %d\n",i,val[i]); val[i]=230;}
