@@ -87,10 +87,6 @@ int main(int argc, char *argv[])
 
    	data.read(); /* read last data of rgb and hsv */
     bool erro_data=false;
-    /*
-    if(checkFile(file,fileName))
-        for(int i;i<7;i++) val[i]=125;
-    */
 
     for (int i = 0; i < 6; ++i)
     {
