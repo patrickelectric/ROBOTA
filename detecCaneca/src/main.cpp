@@ -80,10 +80,12 @@ infoImg lata_x(Mat image);              //funcao que recebe a imagem do filtro f
 rgb value;        /*rgb*/
 rgb valueh;       /*hsv*/
 infoImg localCan; /*info of imag process*/
+bool matlabBool=false;  /*boolean to control Matlab functions*/
+Cronometer crono;       /*cronometer 1*/
+Cronometer crono2;      /**cronometer 2*/
 /********************DECLARATIONS****************/
 
 /**********************MAIN**********************/
-
 int main(int argc, char *argv[])
 {
     uno.begin(9600,"/dev/ttyUSB0"); //inicia a comunicacao serial
@@ -93,10 +95,28 @@ int main(int argc, char *argv[])
 
     start_fps();					//inicia a captura do fps
 
-	setInitParameters();            
+	setInitParameters();           
+
+    if (argc == 2)                  /*if argument exist run matlaab recorder*/
+    {
+        matlabBool=true;
+        for(int i=0;i<3;i++)
+        {
+            printf("Matlab recorder ON : %d s\n",3-i);
+            sleep(1);
+        }
+    }
+    else
+        for(int i=0;i<3;i++)
+            {
+                printf("adicionne argument to use matlab\n");
+                printf("Matlab recorder OFF : %d s\n",3-i);
+                sleep(1);
+            }
+
 
    	data.read(); //le o results.dat
-    if(checkFile(file,fileName))
+    if(checkFile(file,fileName))    //f data doesnt exist return the number of the beast
         return 666;
     
    	valtovalue();
@@ -198,6 +218,7 @@ infoImg lata_x(Mat image)
 
     soma_x=soma_x/max_area;
     soma_y=soma_y/max_area;
+    printf("AREA:                      %f\n",max_area );
 
     /* evita algum tipo de ruido muito gritante */
     if (soma_x<700 && soma_x>-700 && soma_y<700 && soma_y>-700)
@@ -222,21 +243,23 @@ infoImg lata_x(Mat image)
     printf("%f ; %f ; %f ; %d\n",SampleTime,filterTime,Newvalx,infoImg.x);
 
     //filtro de primeira ordem x e y
-    Newvalx=Newvalx*( 1-SampleTime/(filterTime+SampleTime))+(SampleTime/(filterTime+SampleTime))*infoImg.x;
-    Newvaly=Newvaly*( 1-SampleTime/(filterTime+SampleTime))+(SampleTime/(filterTime+SampleTime))*infoImg.y;
+    Newvalx=(Newvalx+0.00001)*( 1-(SampleTime+0.00001)/(filterTime+SampleTime))+((SampleTime+0.00001)/(filterTime+SampleTime))*infoImg.x;
+    Newvaly=(Newvaly+0.00001)*( 1-(SampleTime+0.00001)/(filterTime+SampleTime))+((SampleTime+0.00001)/(filterTime+SampleTime))*infoImg.y;
+    //Newvalx=infoImg.x;
+    //Newvaly=infoImg.y;
 
-    /*
+    
     printf("***************************\n");
-    printf("%f  XXXXX    %f\n",Newvalx,infoImg.x);
-    printf("%f  YYYYY    %f\n",Newvaly,infoImg.y);
+    printf("%f  XXXXX    %f\n",Newvalx,(float)infoImg.x);
+    printf("%f  YYYYY    %f\n",Newvaly,(float)infoImg.y);
     printf("alfa=%f\n", ( SampleTime/(filterTime+SampleTime)) );
     printf("sec=%f\n", SampleTime);
     printf("***************************\n");
-    */
+    
 
 
-    infoImg.x=Newvalx;
-    infoImg.y=Newvaly;
+    infoImg.x=(int)Newvalx;
+    infoImg.y=(int)Newvaly;
 
     printf("center>>%d,%d<<\n",infoImg.x,infoImg.y);
     
@@ -329,10 +352,11 @@ void *filter_leanalise (void *)
     sleep(2);    
 
     int lelesco;
+    crono.startCrono();
 
     while(1)
     {
-
+        crono2.startCrono();
         pthread_cond_init(&newrgbFilter, NULL);
         pthread_cond_init(&newhsvFilter, NULL);
         pthread_mutex_lock(&emframe);
@@ -425,12 +449,37 @@ void *filter_leanalise (void *)
         }
     
 
+        /*function to save data for matlab*/
+        if(matlabBool==true)
+        {
+            sprintf(text, "MATLAB: ON %d%%",( (int)matlab.i-1 ));
+            putText(copyFrame, text, Point(5,45), FONT_HERSHEY_PLAIN, 1.0, CV_RGB(0,255,0));
+
+            while(crono2.finishCrono(false)<0.25){};
+            for(int i=0;i<matlab.i;i++)printf("#");
+            printf(":  %d%%\n",(int)matlab.i-1);
+            if(matlab.testLim())
+            {
+                matlab.i++;
+                matlab.x[matlab.i]=localCan.x;
+                matlab.y[matlab.i]=localCan.y;
+                matlab.timexy[matlab.i]=crono.finishCrono(true);
+                matlab.theta[matlab.i]=atan(-(copyFrame.cols/2-localCan.x+0.0000000001)/(copyFrame.rows-localCan.y+0.0000000001))*180/pi;
+            }
+            else
+            {
+                matlabBool=false;
+                matlab.saveMatlab();
+            }
+        }
+        else
+            sprintf(text, "MATLAB: OFF");
+            putText(copyFrame, text, Point(5,45), FONT_HERSHEY_PLAIN, 1.0, CV_RGB(0,255,0));
+
         /* mostra o resultado do local da caneca */
         //namedWindow("resposta", CV_WINDOW_FREERATIO);
         imshow("resposta",copyFrame);
         end_fps();
         waitKey(30);
-        
-
     }
 }

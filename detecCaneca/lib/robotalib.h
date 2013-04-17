@@ -13,11 +13,14 @@
 //#include "serial.h"
 #include <opencv/cv.h>
 #include <opencv/highgui.h>
+#include "Cronometer.h"
+#include "Cronometer.cpp"
 #include "robota_data.h"
 #include "robota_opencv.h"
 
 #include "serialArduino.h"
 #include "serialArduino.cpp"
+#include "robotaMatlab.h"
 #include "filtro.h"
 
 VideoCapture cap(0);                /* declare video capture */
