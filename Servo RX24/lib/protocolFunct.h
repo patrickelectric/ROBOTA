@@ -25,42 +25,6 @@ long round(long d)
   return (long)d;
 }
 
-
-//-----------------------------------------------------------------   
-int RX24::readError()
-{
-  /*
-  int timeCounter = 0;
-  digitalWrite(controlPin,LOW);
-  while(Serial.available() < 5 & timeCounter < TIME_OUT)
-  {  // Wait til the status packet is filled
-    timeCounter++;
-    delay(1);           // Removes bytes until the status packet starts (0xFF 0xFF ...)
-    if( Serial.peek() != 255 )
-    {
-        Serial.read(); //removes the byte if it is different from 0xFF
-    }
-  }
-  
-  while (Serial.available() > 0)  //while the status packets is not completely read
-  { 
-    unsigned char incomingByte = Serial.read();   
-    if(incomingByte==0xFF && Serial.peek()==0xFF)
-    {  
-      Serial.read(); //removes form the buffer the second start byte
-      Serial.read(); //removes form the buffer the ID byte                                   
-      Serial.read(); //removes form the buffer the length byte                                   
-      //reads and fetch the byte corresponding to the error byte
-      unsigned char errorByte = Serial.read();
-      //returns the error byte (to handle it, see page 11 on dynamixel user guide)
-      return errorByte;
-    }                
-  }
-  */
-  return -1;
-}
-
-
 //-----------------------------------------------------------------   
 int RX24::move(unsigned char ID, long positionInGrads)     // positionInGrads 0<x<300
 {
@@ -91,7 +55,8 @@ int RX24::move(unsigned char ID, long positionInGrads)     // positionInGrads 0<
   serialport_writebyte(checksum);
   usleep(TX_DELAY_TIME);
   //digitalWrite(controlPin,LOW);
-  return readError();    
+  //return readError();  
+  return 0;  
 }
 
 
@@ -124,7 +89,8 @@ int RX24::setServoMoveSpeed(unsigned char ID, unsigned char moveSpeed){
   serialport_writebyte(checksum);
   usleep(TX_DELAY_TIME);
   //digitalWrite(controlPin,LOW);
-  return readError();  
+  //return readError();  
+  return 0;
 }
 
 
@@ -146,5 +112,66 @@ int RX24::resetToFactoryDefault(unsigned char ID)
   serialport_writebyte(Checksum);
   usleep(TX_DELAY_TIME);
   //digitalWrite(controlPin,LOW);       // Set Rx Mode  
-  return readError();         
+  //return readError();         
+  return 0;
 } 
+
+
+//-----------------------------------------------------------------  
+int RX24::setID(unsigned char oldID, unsigned char newID)
+{
+  
+  unsigned int TChecksum = (oldID +
+                            RX_ID_LENGTH +
+                            RX_WRITE_DATA +
+                            RX_ID +
+                            newID);  
+  while ( TChecksum >= 255){
+  TChecksum -= 255;
+  }
+ unsigned int checksum = 255 - TChecksum;         
+
+  //digitalWrite(controlPin,HIGH);     
+  serialport_writebyte(RX_START);               
+  serialport_writebyte(RX_START);
+  serialport_writebyte(oldID);
+  serialport_writebyte(RX_ID_LENGTH);
+  serialport_writebyte(RX_WRITE_DATA);
+  serialport_writebyte(RX_ID);
+  serialport_writebyte(newID);
+  serialport_writebyte(checksum);
+  //usleep(TX_DELAY_TIME);
+  //digitalWrite(controlPin,LOW);     
+  //return readError();                 
+  return 0;
+}
+
+
+//-----------------------------------------------------------------  
+int RX24::setBaud(unsigned char ID, unsigned char baud)
+{        
+  unsigned int TChecksum = (ID + 
+                            RX_BD_LENGTH + 
+                            RX_WRITE_DATA + 
+                            RX_BAUD_RATE + 
+                            baud); 
+  while ( TChecksum >= 255){
+    TChecksum -= 255;
+  }
+
+  unsigned int checksum = 255 - TChecksum;         
+
+  //digitalWrite(controlPin,HIGH);      
+  serialport_writebyte(RX_START);              
+  serialport_writebyte(RX_START);
+  serialport_writebyte(ID);
+  serialport_writebyte(RX_BD_LENGTH);
+  serialport_writebyte(RX_WRITE_DATA);
+  serialport_writebyte(RX_BAUD_RATE);
+  serialport_writebyte(baud);
+  serialport_writebyte(checksum);
+  //delayMicroseconds(TX_DELAY_TIME);
+  //digitalWrite(controlPin,LOW);      
+  //return readError();                
+  return 0;
+}

@@ -21,11 +21,11 @@ int main(int argc, char *argv[])
     Serial.local_usb="/dev/ttyUSB0";
     Serial.baudrate=57600;
 
-    if(argc<3) printf("Foi escolhido a porta /dev/ttyUSB0, ja que não foi colocado nenhum argumento\n");
+    if(argc<3) printf("Foi escolhido a porta /dev/ttyO0, ja que não foi colocado nenhum argumento\n");
     else
     {
-	printf("Padrão /dev/ttyUSB0 57600\n\n");
-	Serial.local_usb=argv[1];
+    	printf("Padrão /dev/ttyO0 57600\n\n");
+    	Serial.local_usb=argv[1];
         Serial.baudrate=atoi(argv[2]);
         printf("\nPorta ""%s"" com o baudrate de %d,mensagem: %s\n\n",Serial.local_usb,Serial.baudrate,Serial.mensagem);
     }
@@ -36,6 +36,8 @@ int main(int argc, char *argv[])
 
     while(1)
     {
+        printf("statou\n");
+        sleep(3);
     	printf("><><><><><><><><><><><><><><><><><><><><><><><><><><><\n");
     	servo.setServoMoveSpeed(1,600);
     	sleep(2);
@@ -46,5 +48,20 @@ int main(int argc, char *argv[])
     	sleep(1);
     	servo.move(1,0);
     	sleep(5);
+        printf("trocar id para 2\n");
+        servo.setID(1,2);
+        sleep(1);
+        printf("><><><><><><><><><><><><><><><><><><><><><><><><><><><\n");
+        servo.setServoMoveSpeed(2,600);
+        sleep(2);
+        servo.move(2,300);
+        sleep(4);
+        printf("><><><><><><><><><><><><><><><><><><><><><><><><><><><\n");
+        servo.setServoMoveSpeed(2,600);
+        sleep(1);
+        servo.move(2,0);
+        sleep(5);
+        printf("trocar id para 1\n");
+        servo.setID(2,1);
     }
 }
