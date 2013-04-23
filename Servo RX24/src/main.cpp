@@ -36,32 +36,16 @@ int main(int argc, char *argv[])
 
     while(1)
     {
-        printf("statou\n");
-        sleep(3);
-    	printf("><><><><><><><><><><><><><><><><><><><><><><><><><><><\n");
-    	servo.setServoMoveSpeed(1,600);
-    	sleep(2);
-    	servo.move(1,300);
-    	sleep(4);
-    	printf("><><><><><><><><><><><><><><><><><><><><><><><><><><><\n");
-    	servo.setServoMoveSpeed(1,600);
-    	sleep(1);
-    	servo.move(1,0);
-    	sleep(5);
-        printf("trocar id para 2\n");
-        servo.setID(1,2);
         sleep(1);
-        printf("><><><><><><><><><><><><><><><><><><><><><><><><><><><\n");
-        servo.setServoMoveSpeed(2,600);
-        sleep(2);
-        servo.move(2,300);
-        sleep(4);
-        printf("><><><><><><><><><><><><><><><><><><><><><><><><><><><\n");
-        servo.setServoMoveSpeed(2,600);
+        printf("liga\n");
+        servo.setLed(1,1);
+        servo.setServoMoveSpeed(1,110);
         sleep(1);
-        servo.move(2,0);
+    	printf("desliga\n");
+        sleep(1);
+        servo.setLed(1,0);
+        sleep(1);
+        servo.move(1, 0);
         sleep(5);
-        printf("trocar id para 1\n");
-        servo.setID(2,1);
     }
 }

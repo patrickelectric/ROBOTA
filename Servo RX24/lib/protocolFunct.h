@@ -61,7 +61,10 @@ int RX24::move(unsigned char ID, long positionInGrads)     // positionInGrads 0<
 
 
 //-----------------------------------------------------------------   
-int RX24::setServoMoveSpeed(unsigned char ID, unsigned char moveSpeed){
+int RX24::setServoMoveSpeed(unsigned char ID, unsigned char moveSpeed)
+{
+  moveSpeed = round(map(moveSpeed,0,114,0,1023));
+
   char Speed_H,Speed_L;
   Speed_H = moveSpeed >> 8; 
   Speed_L = moveSpeed;        
@@ -140,7 +143,7 @@ int RX24::setID(unsigned char oldID, unsigned char newID)
   serialport_writebyte(RX_ID);
   serialport_writebyte(newID);
   serialport_writebyte(checksum);
-  //usleep(TX_DELAY_TIME);
+  usleep(TX_DELAY_TIME);
   //digitalWrite(controlPin,LOW);     
   //return readError();                 
   return 0;
@@ -170,8 +173,31 @@ int RX24::setBaud(unsigned char ID, unsigned char baud)
   serialport_writebyte(RX_BAUD_RATE);
   serialport_writebyte(baud);
   serialport_writebyte(checksum);
-  //delayMicroseconds(TX_DELAY_TIME);
+  usleep(TX_DELAY_TIME);
   //digitalWrite(controlPin,LOW);      
   //return readError();                
   return 0;
+}
+
+int RX24::setLed(unsigned char ID, unsigned char value)
+{
+  unsigned int TChecksum = (ID + RX_LED_LENGTH + RX_WRITE_DATA + RX_LED + value);
+  while ( TChecksum >= 255){            
+  TChecksum -= 255;     
+  }
+  unsigned int Checksum = 255 - TChecksum;
+    
+  //digitalWrite(controlPin,HIGH);      // Set Tx Mode
+  serialport_writebyte(RX_START);                 // Send Instructions over Serial
+  serialport_writebyte(RX_START);
+  serialport_writebyte(ID);
+  serialport_writebyte(RX_LED_LENGTH);
+  serialport_writebyte(RX_WRITE_DATA);
+  serialport_writebyte(RX_LED);
+  serialport_writebyte(value);
+  serialport_writebyte(Checksum);
+  usleep(TX_DELAY_TIME);
+//  digitalWrite(controlPin,LOW);       // Set Rx Mode
+  
+//  return readError();
 }
