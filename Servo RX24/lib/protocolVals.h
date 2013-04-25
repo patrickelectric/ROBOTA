@@ -126,6 +126,7 @@ public:
         int modeDC(unsigned char);
         int setDCMode(unsigned char, unsigned char, int);
         int setServoMoveSpeed(unsigned char, unsigned char);
+        int setServoTorque(unsigned char, unsigned int);
         int setServoMode(unsigned char, unsigned int, unsigned int);
     
         int readPosition(unsigned char);
@@ -133,6 +134,8 @@ public:
         int readStatus(unsigned char);
         
         int setLed(unsigned char, unsigned char); 
+        int setTorque(unsigned char, unsigned char); 
+        int send(unsigned char, unsigned char,unsigned char); 
       
         int setAlarmShutdown(unsigned char, unsigned char);  
         int setAlarmLed(unsigned char ID, unsigned char value);

@@ -33,19 +33,37 @@ int main(int argc, char *argv[])
     printf("Foi escolhido a porta %s, com o baudrate de %d\n\n",Serial.local_usb, Serial.baudrate );
     fd = serialport_init(Serial.local_usb, Serial.baudrate);
     sleep(1);
-
     while(1)
     {
-        sleep(1);
-        printf("liga\n");
-        servo.setLed(1,1);
-        servo.setServoMoveSpeed(1,110);
-        sleep(1);
-    	printf("desliga\n");
-        sleep(1);
         servo.setLed(1,0);
+        //servo.setLed(1,0);
+        //sleep(1);
+        //servo.setTorque(1,1);
+        //servo.send(1,35,1023);
+        //sleep(1);
+        //servo.modeDC(1);
+        //servo.setLed(1,1);
+        //servo.setDCMode(1,0,500);
+        //servo.setServoTorque(1,0);
         sleep(1);
-        servo.move(1, 0);
-        sleep(5);
+        servo.setLed(1,1);
+        sleep(1);
+        //sleep(2);
+        //sleep(1);
+        
     }
 }
+
+
+/*
+        servo.setLed(1,0);
+        sleep(1);
+        servo.modeDC(1);
+        sleep(1);
+        servo.setLed(1,1);
+        sleep(1);
+        servo.setDCMode(1,1,0);
+        sleep(5);
+        servo.setLed(1,0);
+        sleep(1);
+        */
