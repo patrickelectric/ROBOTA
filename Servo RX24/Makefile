@@ -1,2 +1,3 @@
 all:
-	arm-linux-gnueabi-gcc-4.6  src/main.cpp -o servo 
+	gcc  src/main.cpp -lm -o servo
+

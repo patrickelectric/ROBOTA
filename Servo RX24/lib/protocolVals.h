@@ -102,49 +102,94 @@
 #define RX_START                    255
 #define BUFFER_SIZE		            64
 #define TIME_OUT                    10
-#define TX_DELAY_TIME		        4000
+#define TX_DELAY_TIME		       160 //160
  
 #define RX_DC_CW                    1
 #define RX_DC_CCW                   0
 
+#define delay_read 2800
 
-class RX24 {
+void printMemoria(unsigned int memoria)           //function to print val in binario                                 
+{
+    printf("0b");
+    for(int i=8;i>0;i--)
+    {
+        if((memoria & (unsigned int)pow(2,i-1))!=0) printf("1");
+        else
+            printf("0");
+    }
+    printf("\n");
+}
+
+struct erroRX                                   //struct for error debuger 
+{
+    int id;
+    int erro;
+    void addID(unsigned int i)
+    {
+        id =i;
+    }
+    void adderro(unsigned int i)
+    {
+        erro =i;
+    }
+    void show()
+    {
+        printf("ID: %d, ERRO:", id);
+        printMemoria(erro);
+        if((erro & (unsigned int)pow(2,0))!=0) printf("Input Voltage Error\n");
+        if((erro & (unsigned int)pow(2,1))!=0) printf("Angle Limit Error\n");
+        if((erro & (unsigned int)pow(2,2))!=0) printf("Overheating Error\n");
+        if((erro & (unsigned int)pow(2,3))!=0) printf("Range Error\n");
+        if((erro & (unsigned int)pow(2,4))!=0) printf("Checksum Error\n");
+        if((erro & (unsigned int)pow(2,5))!=0) printf("Overload Error\n");
+        if((erro & (unsigned int)pow(2,6))!=0) printf("Instruction Error\n");
+    }
+};
+
+class RX24{                                   //servo functions
 private:
         unsigned char controlPin;        
-        int readError();
 public:
         //RX24();
         //~RX24();
+
+        erroRX readError();
         
-        void start(long, unsigned char);
-        int setID(unsigned char, unsigned char);
-        int setBaud(unsigned char, unsigned char);
+        void start(long, unsigned char);                                //<--- nao existe
+        int setID(unsigned char, unsigned char);                        //change ID
+        int setBaud(unsigned char, unsigned char);                      //set a baudrate
        
-        int move(unsigned char, long);
+        int move(unsigned char, long);                                  //move to a position in grads, turn on servo mode 1º
         int setMoveSpeed(unsigned char, unsigned char);
       
-        int modeDC(unsigned char);
-        int setDCMode(unsigned char, unsigned char, int);
-        int setServoMoveSpeed(unsigned char, unsigned char);
-        int setServoTorque(unsigned char, unsigned int);
-        int setServoMode(unsigned char, unsigned int, unsigned int);
-    
-        int readPosition(unsigned char);
-        int readSpeed(unsigned char); 
-        int readStatus(unsigned char);
-        
-        int setLed(unsigned char, unsigned char); 
-        int setTorque(unsigned char, unsigned char); 
-        int send(unsigned char, unsigned char,unsigned char); 
+        int modeDC(unsigned char);                                      //change servo to DCmode
+        int setDCMode(unsigned char, unsigned char, int);               //move speed and direction
+        int modeDCoff(unsigned char);                                   //<--- nao funciona
+        int setServoMoveSpeed(unsigned char, unsigned char);            //set speed on servo
+
+        int setServoTorque(unsigned char, unsigned int);                //set torque % +-
+        int setServoMode(unsigned char, unsigned int, unsigned int);    //change to servo mode
+        int readPosition(unsigned char ID);                             //read position
+        int readSpeed(unsigned char);                                   //<--- nao existe
+        int readStatus(unsigned char);                                  //<--- nao existe
+        int readMaxTorque(unsigned char ID);                            //read max torque            
+        int modeTorqueMax(unsigned char ID);                            //<--- nao funciona
+        erroRX setLed(unsigned char, unsigned char);                    //<--- change led status, and read servo error
+        int setTorque(unsigned char, unsigned char);                    //turn on torque
+
+        int send(unsigned char, unsigned char,unsigned char);           //send msg to servo
       
-        int setAlarmShutdown(unsigned char, unsigned char);  
-        int setAlarmLed(unsigned char ID, unsigned char value);
+        int setAlarmShutdown(unsigned char, unsigned char);             //alaam shutdown
+        int setAlarmLed(unsigned char ID, unsigned char value);         //alarm led
         
-        int setLimitTemperature(unsigned char, unsigned char);
+        int setLimitTemperature(unsigned char, unsigned char);          //temp limit
         
-        int resetToFactoryDefault(unsigned char ID);
+        int resetToFactoryDefault(unsigned char ID);                    //reset to factory
   
 };
- 
+ //int RX24::readPosition(unsigned char ID)
+   //     {return 0;}
+erroRX servoErro;
 #endif
 

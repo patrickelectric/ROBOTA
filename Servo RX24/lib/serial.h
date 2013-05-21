@@ -29,7 +29,7 @@ int fd = 0;
 char serialport[256];
 char buf[20], dat[20], use[1];
 int rc,n;
-bool debugmode =true;
+bool debugmode =false;
 /*************************SERIAL VARIABLES*******************/
 
 

@@ -1,3 +1,0 @@
-all:
-	gcc  src/main.cpp -o servo
-

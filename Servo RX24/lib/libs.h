@@ -20,8 +20,15 @@
 #include <fcntl.h>    /* File control definitions */
 #include <errno.h>    /* Error number definitions */
 #include <termios.h>  /* POSIX terminal control definitions */
+#include <math.h> 	  /* Math lib*/
+#include <errno.h>    /* Error number definitions */
+#include <termios.h>  /* POSIX terminal control definitions */
+#include <pthread.h>
+#include <math.h>
+#include <time.h>
 #include "serial.h"   /* lib for serial comunication */
 #include "protocolVals.h"  /* Protocol values to servo comunication  */
 #include "protocolFunct.h"  /* Protocol functions to servo comunication  */
+#include "Cronometer.cpp"
 
 /***************************LIBS*****************************/
