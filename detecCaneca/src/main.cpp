@@ -81,6 +81,7 @@ rgb value;        /*rgb*/
 rgb valueh;       /*hsv*/
 infoImg localCan; /*info of imag process*/
 bool matlabBool=false;  /*boolean to control Matlab functions*/
+bool boolShow=false;    /*boolean to control show image*/
 Cronometer crono;       /*cronometer 1*/
 Cronometer crono2;      /**cronometer 2*/
 /********************DECLARATIONS****************/
@@ -111,6 +112,22 @@ int main(int argc, char *argv[])
             {
                 printf("adicionne argument to use matlab\n");
                 printf("Matlab recorder OFF : %d s\n",3-i);
+                sleep(1);
+            }
+
+    if (argc == 3)                  /*if argument not show image*/
+    {
+        for(int i=0;i<3;i++)
+        {
+            printf("IMAGE SHOW OFF : %d s\n",3-i);
+            sleep(1);
+        }
+    }
+    else
+        for(int i=0;i<3;i++)
+            {
+                boolShow=true;
+                printf("IMAGE SHOW ON : %d s\n",3-i);
                 sleep(1);
             }
 
@@ -413,6 +430,8 @@ void *filter_leanalise (void *)
         putText(copyFrame, text, Point(5,15), FONT_HERSHEY_PLAIN, 1.0, CV_RGB(0,255,0));
         sprintf(text, "Theta: %.2f degrees",atan(-(copyFrame.cols/2-localCan.x+0.0000000001)/(copyFrame.rows-localCan.y+0.0000000001))*180/pi);
         putText(copyFrame, text, Point(5,30), FONT_HERSHEY_PLAIN, 1.0, CV_RGB(0,255,0));
+        sprintf(text, "FPS: %.2f",fps);
+        putText(copyFrame, text, Point(5,75), FONT_HERSHEY_PLAIN, 1.0, CV_RGB(0,255,0));
     
         
         /*
@@ -478,7 +497,8 @@ void *filter_leanalise (void *)
 
         /* mostra o resultado do local da caneca */
         //namedWindow("resposta", CV_WINDOW_FREERATIO);
-        imshow("resposta",copyFrame);
+        if(boolShow)    
+            imshow("resposta",copyFrame);                             //mostrar a resposta
         end_fps();
         waitKey(30);
     }
