@@ -298,9 +298,9 @@ void *streaming( void *)        /*take image from camera and make atualization o
     {
         pthread_mutex_lock(&emframe);
         cap >> frame;
+        pthread_cond_signal(&newframe);
         pthread_mutex_unlock(&emframe);
         usleep(10);
-        pthread_cond_signal(&newframe);
 
     }
     return NULL;
@@ -315,8 +315,9 @@ void *filter_lehsv (void *)     /*make the filter of hsv image*/
     {   
 
         Mat image;
-        pthread_cond_init(&newframe, NULL);
         
+        //pthread_cond_wait(&newframe,&emframe);
+        //usleep(10);
         pthread_mutex_lock(&emframe);
         frame.copyTo(image);
         pthread_mutex_unlock(&emframe);
@@ -341,8 +342,8 @@ void *filter_lergb (void *)     /*make the rgb filter*/
     {   
         
         Mat image;
-        pthread_cond_init(&newframe, NULL);
 
+        //pthread_cond_wait(&newframe,&emframe);
         pthread_mutex_lock(&emframe);
         frame.copyTo(image);
         pthread_mutex_unlock(&emframe);

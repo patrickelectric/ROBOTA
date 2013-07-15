@@ -18,57 +18,117 @@ erroRX error;
 /*********************MAIN******************/
 int main(int argc, char *argv[])
 {
-    Serial.local_usb="/dev/ttyUSB0";
+    //Serial.local_usb="/dev/ttyUSB0";
+    Serial.local_usb="/dev/ttyO2";
     Serial.baudrate=57600;
 
-    gpio pino;
-
-    if(argc<3) printf("Foi escolhido a porta /dev/ttyO0, ja que não foi colocado nenhum argumento\n");
+    //gpio pino;
+    /*
+    if(argc<3) printf("Foi escolhido a porta /dev/ttyO2, ja que não foi colocado nenhum argumento\n");
     else
     {
-    	printf("Padrão /dev/ttyO0 57600\n\n");
+    	printf("Padrão /dev/ttyO2 57600\n\n");
     	Serial.local_usb=argv[1];
         Serial.baudrate=atoi(argv[2]);
         printf("\nPorta ""%s"" com o baudrate de %d,mensagem: %s\n\n",Serial.local_usb,Serial.baudrate,Serial.mensagem);
     }
+    */
+
 
     printf("Foi escolhido a porta %s, com o baudrate de %d\n\n",Serial.local_usb, Serial.baudrate );
     fd = serialport_init(Serial.local_usb, Serial.baudrate);
     
-    pino.start();
-    sleep(1);
-    pino.pin(1);
-
-    if(argc>1)
+    /*
+    while(1)
     {
-        printf("manda torque\n");
+        servo.move(1,350);
+        sleep(1);
+        printf("manda\n");
+    }
+    */
+
+    //pino.start();
+    sleep(1);
+    //pino.pin(1);
+
+    if(argc==1)
+    {
+        printf("reset\n");
         //servo.resetToFactoryDefault(1);
-        sleep(1);
-        servo.modeDC(1);
-        printf("torque,l,d\n");
-        servo.setTorque(1,0);
-        sleep(1);
-        printf("torque,valor\n");
-        servo.setServoTorque(1,atoi(argv[1]));
-        sleep(1);
+        //servo.setID(1,2);
+        //sleep(1);
+        servo.setServoMoveSpeed(1, 40);
+        usleep(10000);
+        servo.setServoMoveSpeed(2, 40);
+        sleep(4);
+        //servo.modeDC(1);
+        //printf("torque,l,d\n");
+        //servo.setTorque(1,0);
+        //sleep(1);
+        //printf("torque,valor\n");
+        //servo.setServoTorque(1,atoi(argv[1]));
+        printf("0\n");
+        servo.move(1,0);
+        usleep(10000);
+        servo.move(2,0);
+        sleep(3);
+        printf("350\n");
+        servo.move(1,350);
+        usleep(10000);
+        servo.move(2,350);
+        sleep(3);
+        printf("200\n");
+        servo.move(1,200);
+        usleep(10000);
+        servo.move(2,200);
+        sleep(3);
         return 0;
     }
-    
+    /*
     int pos=0;
     servo.setServoTorque(1,20);
     sleep(1);
     printf("setando posicao\n" );
-    while(pos < 960 || pos > 1000)
+///////
+    Cronometer crono;
+    usleep(10000);
+    crono.init("tempo");
+    usleep(10000);
+    crono.startCrono();
+//////
+    float last,atual,pior=0.0,melhor=10.0;
+    usleep(4000);
+    servo.setServoTorque(1,20);
+    usleep(4000);
+    /*
+    while(pos < 960 || pos > 950)
     {
-        pos=servo.readPosition(1);
-        usleep(4000);
-        if(pos<960)
-            servo.setServoTorque(1,20);
-        else
-            servo.setServoTorque(1,-20);
+        atual=crono.finishCrono(false);
+        pos=servo.readPosition(1); //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<,descomenta
+        //usleep(4000);
        printf("%d\n",pos );
-       usleep(4000);
+       //usleep(4000);
+       printf("tempo()=%f\n",last );
+/*       double p16 = 1, pi = 0, precision = 20000;
+
+        for(int k=0; k<=precision; k++)
+        {
+        pi += 1.0/p16 * (4.0/(8*k + 1) - 2.0/(8*k + 4) - 1.0/(8*k + 5) - 1.0/(8*k+6));
+        p16 *= 16;
+        }
+        printf("PI: %.9f\n",pi );
+        */
+        /*
+       if(atual-last>pior) 
+            pior=atual-last; 
+       printf("pior : %f\n", pior );
+       if(atual-last<melhor) 
+            melhor=atual-last; 
+       printf("melhor : %f\n", melhor );
+       last=atual;
     }
+    */
+    /*
     printf("posicao ok\n");
     servo.setServoTorque(1,0);
     sleep(1);
@@ -78,7 +138,7 @@ int main(int argc, char *argv[])
 
     //------------------------------------------------
     printf("iniciando programa\n");
-    Cronometer crono;
+    //Cronometer crono;
     usleep(10000);
     crono.init("tempo");
     usleep(10000);
@@ -124,10 +184,11 @@ int main(int argc, char *argv[])
         };
         pot=pot*(-1);
         */
+        /*
     }
     sleep(1);
     servo.setServoTorque(1,0);
-
+*/
 }
     /*
     else

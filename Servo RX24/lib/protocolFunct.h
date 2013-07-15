@@ -14,6 +14,8 @@
 #include "protocolVals.h"
 #include "gpio.h"     /*lib to acces gpio pins*/
 
+//#define pinopen pino.pin(1);
+//#define pinclose pino.pin(0);
 //-----------------------------------------------------------------   
 erroRX RX24::readError()
 {
@@ -93,7 +95,7 @@ int RX24::move(unsigned char ID, long positionInGrads)     //0-900
   while ( TChecksum >= 255) TChecksum -= 255;     
   unsigned int checksum = 255 - TChecksum;
     
-  pino.pin(1);
+  //pino.pin(1);
   serialport_writebyte(RX_START);  // start byte 2
   serialport_writebyte(RX_START);  //start byte 2
   serialport_writebyte(ID);    // id
@@ -104,7 +106,7 @@ int RX24::move(unsigned char ID, long positionInGrads)     //0-900
   serialport_writebyte(Position_H);
   serialport_writebyte(checksum);
   usleep(TX_DELAY_TIME);
-  pino.pin(0);  
+  //pino.pin(0);  
   return 0;  
 }
 
@@ -171,9 +173,9 @@ int  RX24::readPosition(unsigned char ID)
 
   int n = read (fd, buf, sizeof buf);
 
-  int vel1;
-  int vel2;
-  int vel;
+  int vel1=0;
+  int vel2=0;
+  int vel=0;
   unsigned char checkCalc;
 
 
@@ -206,7 +208,7 @@ int  RX24::readPosition(unsigned char ID)
   }
   else
     //printf("no !!!!!\n");
-    return 0;
+    return 666;
 }
 
 
@@ -299,7 +301,7 @@ int RX24::setServoMoveSpeed(unsigned char ID, unsigned char moveSpeed)
     TChecksum -= 255;     
   }          
   unsigned int checksum = 255 - TChecksum;
-  pino.pin(1);
+  //pino.pin(1);
   serialport_writebyte(RX_START);  // start byte 2
   serialport_writebyte(RX_START);  //start byte 2
   serialport_writebyte(ID);    // id
@@ -310,7 +312,7 @@ int RX24::setServoMoveSpeed(unsigned char ID, unsigned char moveSpeed)
   serialport_writebyte(Speed_H);
   serialport_writebyte(checksum);
   usleep(TX_DELAY_TIME);
-  pino.pin(0);
+  //pino.pin(0);
   //return readError();  
   return 0;
 }
@@ -365,7 +367,7 @@ int RX24::resetToFactoryDefault(unsigned char ID)
   }
   unsigned int Checksum = 255 - TChecksum;
     
-  pino.pin(1);      // Set Tx Mode
+  //pino.pin(1);      // Set Tx Mode
   serialport_writebyte(RX_START);                 // Send Instructions over Serial1
   serialport_writebyte(RX_START);
   serialport_writebyte(ID);
@@ -373,7 +375,7 @@ int RX24::resetToFactoryDefault(unsigned char ID)
   serialport_writebyte(RX_RESET);
   serialport_writebyte(Checksum);
   usleep(TX_DELAY_TIME);
-  pino.pin(0);       // Set Rx Mode  
+  //pino.pin(0);       // Set Rx Mode  
   //return readError();         
   return 0;
 } 
@@ -393,7 +395,7 @@ int RX24::setID(unsigned char oldID, unsigned char newID)
   }
  unsigned int checksum = 255 - TChecksum;         
 
-  pino.pin(1);
+  //pino.pin(1);
   serialport_writebyte(RX_START);               
   serialport_writebyte(RX_START);
   serialport_writebyte(oldID);
@@ -403,7 +405,7 @@ int RX24::setID(unsigned char oldID, unsigned char newID)
   serialport_writebyte(newID);
   serialport_writebyte(checksum);
   usleep(TX_DELAY_TIME);
-  pino.pin(0);
+  //pino.pin(0);
   //return readError();                 
   return 0;
 }
