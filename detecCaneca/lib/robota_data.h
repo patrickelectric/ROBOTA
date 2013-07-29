@@ -32,7 +32,7 @@ bool checkFile(FILE *file,char fileName[])        //checa se esta tudo bem com o
   {
     printf("<><><><><><><><><><><><><><><><><><><><>\n");
     printf("Não foi possivel abrir o arquivo: %s\n", fileName);
-    printf("De uma olhada no caminho.\n", fileName);
+    printf("De uma olhada no caminho.\n");
     return TRUE;
   }
   else

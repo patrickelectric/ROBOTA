@@ -61,6 +61,7 @@ void end_fps()      //finaliza a contagem de tempo
     sec = difftime (end, start);
     fps = counter / sec;
     printf("FPS = %.2f\n", fps);   //mostra o fsp
+    limpa_linha(1);
 }
 
 #define drawCross( center, color, d, drawing )                      	\
@@ -111,7 +112,7 @@ struct infoImg
 };
 
 
-/************************************************/  //function to show de rgb values
+/************************************************/  //function to take the rgb values with mouse
 Mat img;
 void onMouse(int event, int x, int y, int flags, void* param)
 {

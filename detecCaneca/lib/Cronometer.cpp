@@ -20,8 +20,9 @@ void Cronometer::init(char *Name){
 }
 
 void Cronometer::startCrono(){
-	if(!cronoActive){
-		clock_gettime(CLOCK_MONOTONIC ,&cronoTime0);
+	if(cronoActive==0)
+	{
+		clock_gettime(CLOCK_REALTIME ,&cronoTime0);
 		cronoActive = 1;
 		if(cronoName!=NULL)
 		{
@@ -35,11 +36,11 @@ void Cronometer::startCrono(){
 
 float Cronometer::finishCrono(bool check){
 	double difSec=0,difNsec=0;
-	clock_gettime(CLOCK_MONOTONIC ,&cronoTime1);
+	clock_gettime(CLOCK_REALTIME ,&cronoTime1);
 	difSec  = cronoTime1.tv_sec  - cronoTime0.tv_sec;
 	difNsec = cronoTime1.tv_nsec - cronoTime0.tv_nsec;
 	cronoTimeElapsed = difSec + difNsec*0.000000001;
-	cronoActive =0;
+	cronoActive = 0;
 	if(check==true)
 	{
 		if(cronoName!=NULL)
@@ -48,11 +49,12 @@ float Cronometer::finishCrono(bool check){
 			printf("messure: %f (s)\n",cronoTimeElapsed);
 		return cronoTimeElapsed;
 	}
+	return 0;
 }
 
 void Cronometer::startFreq(){
 	if(!freqActive){
-		clock_gettime(CLOCK_MONOTONIC ,&freqTimeLast);
+		clock_gettime(CLOCK_REALTIME ,&freqTimeLast);
 		freqActive = 1;
 		printf("%s: Frequencimeter mode actived.\nWork pretty weel for low Frequencies\n", cronoName);
 	}
@@ -63,7 +65,7 @@ void Cronometer::startFreq(){
 
 void Cronometer::lapFreq(){
 	double difSec=0,difNsec=0;
-	clock_gettime(CLOCK_MONOTONIC ,&freqTimeNow);
+	clock_gettime(CLOCK_REALTIME ,&freqTimeNow);
 	difSec  = freqTimeNow.tv_sec  - freqTimeLast.tv_sec;
 	difNsec = freqTimeNow.tv_nsec - freqTimeLast.tv_nsec;
 	freq = 1/(difSec + difNsec*0.000000001);

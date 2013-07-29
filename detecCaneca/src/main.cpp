@@ -55,7 +55,6 @@ pthread_mutex_t emframe = PTHREAD_MUTEX_INITIALIZER;
 pthread_mutex_t emframe_hsv = PTHREAD_MUTEX_INITIALIZER; 
 pthread_mutex_t emframe_rgb = PTHREAD_MUTEX_INITIALIZER; 
 
-pthread_cond_t newframe;              /*frame foi atualizado*/
 pthread_cond_t newhsvFilter;          /*libera rgb filter, final process*/
 pthread_cond_t newrgbFilter;          /*libera hsv filter, final process*/
 /************************************************/  
@@ -77,13 +76,15 @@ infoImg lata_x(Mat image);              //funcao que recebe a imagem do filtro f
 /********************FUNCTIONS*******************/
 
 /********************DECLARATIONS****************/
-rgb value;        /*rgb*/
-rgb valueh;       /*hsv*/
-infoImg localCan; /*info of imag process*/
+rgb value;              /*rgb*/
+rgb valueh;             /*hsv*/
+infoImg localCan;       /*info of imag process*/
 bool matlabBool=false;  /*boolean to control Matlab functions*/
-bool boolShow=false;    /*boolean to control show image*/
+bool boolShow=true;    /*boolean to control show image*/
+bool boolPrint=true;    /*boolean to printf control*/
 Cronometer crono;       /*cronometer 1*/
-Cronometer crono2;      /**cronometer 2*/
+Cronometer crono2;      /*cronometer 2*/
+char text[20];          /*text to make some functions*/
 /********************DECLARATIONS****************/
 
 /**********************MAIN**********************/
@@ -115,7 +116,7 @@ int main(int argc, char *argv[])
                 sleep(1);
             }
 
-    if (argc == 3)                  /*if argument not show image*/
+    if (argc == 3)                  /*if 2 arguments not show image*/
     {
         for(int i=0;i<3;i++)
         {
@@ -126,9 +127,16 @@ int main(int argc, char *argv[])
     else
         for(int i=0;i<3;i++)
             {
-                boolShow=true;
-                printf("IMAGE SHOW ON : %d s\n",3-i);
-                sleep(1);
+                if(boolShow)
+                {
+                    printf("IMAGE SHOW ON : %d s\n",3-i);
+                    sleep(1);
+                }
+                else
+                {
+                    printf("IMAGE SHOW OFF : %d s\n",3-i);
+                    sleep(1);   
+                }
             }
 
 
@@ -145,10 +153,10 @@ int main(int argc, char *argv[])
     pthread_t filter_rgb,filter_hsv,filter_analise; //filters
 
     
-    pthread_create(&get_img, NULL, streaming , NULL); //take imag from camera
-    pthread_create(&filter_rgb, NULL, filter_lergb , NULL);         // 
+    pthread_create(&get_img, NULL, streaming , NULL);               // take imag from camera
+    pthread_create(&filter_rgb, NULL, filter_lergb , NULL);         // filters
     pthread_create(&filter_hsv, NULL, filter_lehsv , NULL);         // filters
-    pthread_create(&filter_analise, NULL, filter_leanalise , NULL); //
+    pthread_create(&filter_analise, NULL, filter_leanalise , NULL); // Analize o filtro
 
     
     pthread_join(get_img,NULL);
@@ -215,12 +223,12 @@ infoImg lata_x(Mat image)
     {
         mu[i] = moments( Mat(contours[i]), false );
     }
-    
-    printf("<><><><><><><><><><><>\n");
+    if(boolPrint)
+        printf("<><><><><><><><><><><>\n");;
 
 
     float max_area=0.0;
-    int can_i=0;
+    //int can_i=0;
     int soma_x=0;
     int soma_y=0;
 
@@ -235,7 +243,8 @@ infoImg lata_x(Mat image)
 
     soma_x=soma_x/max_area;
     soma_y=soma_y/max_area;
-    printf("AREA:                      %f\n",max_area );
+    if(boolPrint)
+        printf("AREA:                      %f\n",max_area );
 
     /* evita algum tipo de ruido muito gritante */
     if (soma_x<700 && soma_x>-700 && soma_y<700 && soma_y>-700)
@@ -254,33 +263,41 @@ infoImg lata_x(Mat image)
     /* implementacao do filtro e primeiro grau */
     float filterTime=0.25;
     SampleTime=1/(fps+0.01);
-
-    printf("***************************\n");
-    printf("%d ; %d\n",soma_x,soma_y );
-    printf("%f ; %f ; %f ; %d\n",SampleTime,filterTime,Newvalx,infoImg.x);
+    if(boolPrint)
+    {
+        printf("***************************\n");
+        printf("%d ; %d\n",soma_x,soma_y );
+        printf("%f ; %f ; %f ; %d\n",SampleTime,filterTime,Newvalx,infoImg.x);
+    }
 
     //filtro de primeira ordem x e y
-    Newvalx=(Newvalx+0.00001)*( 1-(SampleTime+0.00001)/(filterTime+SampleTime))+((SampleTime+0.00001)/(filterTime+SampleTime))*infoImg.x;
-    Newvaly=(Newvaly+0.00001)*( 1-(SampleTime+0.00001)/(filterTime+SampleTime))+((SampleTime+0.00001)/(filterTime+SampleTime))*infoImg.y;
+    //y(k)=B*y(k-1)+A(u(k))
+    //B=1-A
+    //A=Tempo da amostra/(Tempo da amostra + o tempo desejavel da amostra )
+    Newvalx=(Newvalx+0.00001)*( 1-(SampleTime+0.00001)/(filterTime+SampleTime)) + ((SampleTime+0.00001)/(filterTime+SampleTime))*infoImg.x;
+    Newvaly=(Newvaly+0.00001)*( 1-(SampleTime+0.00001)/(filterTime+SampleTime)) + ((SampleTime+0.00001)/(filterTime+SampleTime))*infoImg.y;
     //Newvalx=infoImg.x;
     //Newvaly=infoImg.y;
 
-    
-    printf("***************************\n");
-    printf("%f  XXXXX    %f\n",Newvalx,(float)infoImg.x);
-    printf("%f  YYYYY    %f\n",Newvaly,(float)infoImg.y);
-    printf("alfa=%f\n", ( SampleTime/(filterTime+SampleTime)) );
-    printf("sec=%f\n", SampleTime);
-    printf("***************************\n");
+    if(boolPrint)
+    {    
+        printf("***************************\n");
+        printf("%f  XXXXX    %f\n",Newvalx,(float)infoImg.x);
+        printf("%f  YYYYY    %f\n",Newvaly,(float)infoImg.y);
+        printf("alfa=%f\n", ( SampleTime/(filterTime+SampleTime)) );
+        printf("sec=%f\n", SampleTime);
+        printf("***************************\n");
+    }
     
 
 
     infoImg.x=(int)Newvalx;
     infoImg.y=(int)Newvaly;
-
-    printf("center>>%d,%d<<\n",infoImg.x,infoImg.y);
-    
-    printf("<><><><><><><><><><><>\n\n");
+    if(boolPrint)
+    {
+        printf("center>>%d,%d<<\n",infoImg.x,infoImg.y);
+        printf("<><><><><><><><><><><>\n\n");
+    }
     return infoImg;
 }
 
@@ -298,7 +315,8 @@ void *streaming( void *)        /*take image from camera and make atualization o
     {
         pthread_mutex_lock(&emframe);
         cap >> frame;
-        pthread_cond_signal(&newframe);
+        Size s( frame.size().width / 2, frame.size().height / 2 );
+        resize( frame, frame, s, 0, 0, CV_INTER_AREA );
         pthread_mutex_unlock(&emframe);
         usleep(10);
 
@@ -316,7 +334,6 @@ void *filter_lehsv (void *)     /*make the filter of hsv image*/
 
         Mat image;
         
-        //pthread_cond_wait(&newframe,&emframe);
         //usleep(10);
         pthread_mutex_lock(&emframe);
         frame.copyTo(image);
@@ -330,6 +347,7 @@ void *filter_lehsv (void *)     /*make the filter of hsv image*/
         pthread_cond_signal(&newhsvFilter);
         
     }
+    return 0;
 }
 
 
@@ -343,7 +361,6 @@ void *filter_lergb (void *)     /*make the rgb filter*/
         
         Mat image;
 
-        //pthread_cond_wait(&newframe,&emframe);
         pthread_mutex_lock(&emframe);
         frame.copyTo(image);
         pthread_mutex_unlock(&emframe);
@@ -359,6 +376,7 @@ void *filter_lergb (void *)     /*make the rgb filter*/
         waitKey(30);
         */
     }
+    return 0;
 }
 
 void *filter_leanalise (void *)
@@ -374,7 +392,8 @@ void *filter_leanalise (void *)
 
     while(1)
     {
-        crono2.startCrono();
+        if(matlabBool)
+            crono2.startCrono();
         pthread_cond_init(&newrgbFilter, NULL);
         pthread_cond_init(&newhsvFilter, NULL);
         pthread_mutex_lock(&emframe);
@@ -398,41 +417,53 @@ void *filter_leanalise (void *)
         imshow("hsv",finalFilter);
         waitKey(30);
         */
-
-        printf("<<<<<<<<<<%d,%d,%d>>>>>>>>>>>.\n",localCan.x,localCan.y,localCan.erro );
-        drawCross ( cvPoint(localCan.x,localCan.y),Scalar(0,0,255), 20, copyFrame);
-        desenha_seta(copyFrame, cvPoint(copyFrame.cols/2,copyFrame.rows) , cvPoint(localCan.x,localCan.y) ,cinza);
-        printf("ANGULO : %fº\n",atan(-(copyFrame.cols/2-localCan.x+0.0000000001)/(copyFrame.rows-localCan.y+0.0000000001))*180/pi);
+        if(boolPrint)
+            printf("<<<<<<<<<<%d,%d,%d>>>>>>>>>>>.\n",localCan.x,localCan.y,localCan.erro );
+        if(boolShow)
+        {
+            drawCross ( cvPoint(localCan.x,localCan.y),Scalar(0,0,255), 20, copyFrame);
+            desenha_seta(copyFrame, cvPoint(copyFrame.cols/2,copyFrame.rows) , cvPoint(localCan.x,localCan.y) ,cinza);
+        }
+        if(boolPrint)
+            printf("ANGULO : %fº\n",atan(-(copyFrame.cols/2-localCan.x+0.0000000001)/(copyFrame.rows-localCan.y+0.0000000001))*180/pi);
         
         //BARRAS
         lelesco++;
         float PW,PL;
         PW=sin(lelesco);
         PL=-PW;
-        line(copyFrame,Point(copyFrame.cols-2,copyFrame.rows/2),Point(copyFrame.cols-2,(int)(PW*239+copyFrame.rows/2)),green,3); //bars
-        line(copyFrame,Point(copyFrame.cols-7,copyFrame.rows/2),Point(copyFrame.cols-7,(int)(PL*239+copyFrame.rows/2)),red,3);   //bars
-        //QUADRANTES
-        int numQuadrantes=4;
-        for(int i=1;i<numQuadrantes;i++)
+        if(boolShow)
         {
-            line(copyFrame,Point(copyFrame.cols*i/numQuadrantes,0),Point(copyFrame.cols*i/numQuadrantes,copyFrame.rows),laranja);
-            line(copyFrame,Point(0,copyFrame.rows*i/numQuadrantes),Point(copyFrame.cols,copyFrame.rows*i/numQuadrantes),laranja);
+            line(copyFrame,Point(copyFrame.cols-2,copyFrame.rows/2),Point(copyFrame.cols-2,(int)(PW*239+copyFrame.rows/2)),green,3); //bars
+            line(copyFrame,Point(copyFrame.cols-7,copyFrame.rows/2),Point(copyFrame.cols-7,(int)(PL*239+copyFrame.rows/2)),red,3);   //bars
+        }
+        //QUADRANTES
+        if(boolShow)
+        {
+            int numQuadrantes=4;
+            for(int i=1;i<numQuadrantes;i++)
+            {
+                line(copyFrame,Point(copyFrame.cols*i/numQuadrantes,0),Point(copyFrame.cols*i/numQuadrantes,copyFrame.rows),laranja);
+                line(copyFrame,Point(0,copyFrame.rows*i/numQuadrantes),Point(copyFrame.cols,copyFrame.rows*i/numQuadrantes),laranja);
+            }
         }
         //CAIXA
-        line(copyFrame,Point(copyFrame.cols/3,4*copyFrame.rows/5),Point(copyFrame.cols*2/3,4*copyFrame.rows/5),blue);
-        line(copyFrame,Point(copyFrame.cols/3,4*copyFrame.rows/5),Point(copyFrame.cols/3,copyFrame.rows),blue);
-        line(copyFrame,Point(copyFrame.cols*2/3,4*copyFrame.rows/5),Point(copyFrame.cols*2/3,copyFrame.rows),blue);
-        //CRUZ
-        //line(copyFrame,Point(copyFrame.cols/2,0),Point(copyFrame.cols/2,copyFrame.rows),laranja);
-        //line(copyFrame,Point(0,copyFrame.rows/2),Point(copyFrame.cols,copyFrame.rows/2),laranja);
-        //TEXTO
-        char text[20];
-        sprintf(text, "X=%d, Y=%d",(copyFrame.cols/2 - localCan.x),(copyFrame.rows/2 - localCan.y));
-        putText(copyFrame, text, Point(5,15), FONT_HERSHEY_PLAIN, 1.0, CV_RGB(0,255,0));
-        sprintf(text, "Theta: %.2f degrees",atan(-(copyFrame.cols/2-localCan.x+0.0000000001)/(copyFrame.rows-localCan.y+0.0000000001))*180/pi);
-        putText(copyFrame, text, Point(5,30), FONT_HERSHEY_PLAIN, 1.0, CV_RGB(0,255,0));
-        sprintf(text, "FPS: %.2f",fps);
-        putText(copyFrame, text, Point(5,75), FONT_HERSHEY_PLAIN, 1.0, CV_RGB(0,255,0));
+        if(boolShow)
+        {
+            line(copyFrame,Point(copyFrame.cols/3,4*copyFrame.rows/5),Point(copyFrame.cols*2/3,4*copyFrame.rows/5),blue);
+            line(copyFrame,Point(copyFrame.cols/3,4*copyFrame.rows/5),Point(copyFrame.cols/3,copyFrame.rows),blue);
+            line(copyFrame,Point(copyFrame.cols*2/3,4*copyFrame.rows/5),Point(copyFrame.cols*2/3,copyFrame.rows),blue);
+            //CRUZ
+            //line(copyFrame,Point(copyFrame.cols/2,0),Point(copyFrame.cols/2,copyFrame.rows),laranja);
+            //line(copyFrame,Point(0,copyFrame.rows/2),Point(copyFrame.cols,copyFrame.rows/2),laranja);
+            //TEXT
+            sprintf(text, "X=%d, Y=%d",(copyFrame.cols/2 - localCan.x),(copyFrame.rows/2 - localCan.y));
+            putText(copyFrame, text, Point(5,15), FONT_HERSHEY_PLAIN, 1.0, CV_RGB(0,255,0));
+            sprintf(text, "Theta: %.2f degrees",atan(-(copyFrame.cols/2-localCan.x+0.0000000001)/(copyFrame.rows-localCan.y+0.0000000001))*180/pi);
+            putText(copyFrame, text, Point(5,30), FONT_HERSHEY_PLAIN, 1.0, CV_RGB(0,255,0));
+            sprintf(text, "FPS: %.2f",fps);
+            putText(copyFrame, text, Point(5,75), FONT_HERSHEY_PLAIN, 1.0, CV_RGB(0,255,0));
+        }
     
         
         /*
@@ -468,12 +499,14 @@ void *filter_leanalise (void *)
             last_msg=0;
         }
     
-
         /*function to save data for matlab*/
         if(matlabBool==true)
         {
-            sprintf(text, "MATLAB: ON %d%%",( (int)matlab.i-1 ));
-            putText(copyFrame, text, Point(5,45), FONT_HERSHEY_PLAIN, 1.0, CV_RGB(0,255,0));
+            if(boolShow)
+            {
+                sprintf(text, "MATLAB: ON %d%%",( (int)matlab.i-1 ));
+                putText(copyFrame, text, Point(5,45), FONT_HERSHEY_PLAIN, 1.0, CV_RGB(0,255,0));
+            }
 
             while(crono2.finishCrono(false)<0.25){};
             for(int i=0;i<matlab.i;i++)printf("#");
@@ -493,8 +526,11 @@ void *filter_leanalise (void *)
             }
         }
         else
-            sprintf(text, "MATLAB: OFF");
-            putText(copyFrame, text, Point(5,45), FONT_HERSHEY_PLAIN, 1.0, CV_RGB(0,255,0));
+            if(boolShow)
+            {
+                sprintf(text, "MATLAB: OFF");
+                putText(copyFrame, text, Point(5,45), FONT_HERSHEY_PLAIN, 1.0, CV_RGB(0,255,0));
+            }
 
         /* mostra o resultado do local da caneca */
         //namedWindow("resposta", CV_WINDOW_FREERATIO);
@@ -503,4 +539,5 @@ void *filter_leanalise (void *)
         end_fps();
         waitKey(30);
     }
+    return 0;
 }

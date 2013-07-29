@@ -1,4 +1,3 @@
-
 class matlab
 {
 	private:
@@ -31,15 +30,15 @@ class matlab
 	{
 		file = fopen(fileName(), "w");      //abre o arquivo para escrita
 		fprintf(file, "x=[");
-		for (int i=1; i<=sizeof(x)/4;i++) fprintf(file,"%d,",x[i]);
+		for (int i=1; i<=(int)sizeof(x)/4;i++) fprintf(file,"%d,",x[i]);
 		//fprintf(file,"\b");
 		fprintf(file,"];\n");
 		fprintf(file, "y=[");
-		for (int i=1; i<=sizeof(y)/4;i++) fprintf(file,"%d,",y[i]);
+		for (int i=1; i<=(int)sizeof(y)/4;i++) fprintf(file,"%d,",y[i]);
 		//fprintf(file,"\b");
 		fprintf(file,"];\n");
 		fprintf(file, "timexy=[");
-		for (int i=1; i<=sizeof(timexy)/4;i++) fprintf(file,"%f,",timexy[i]);
+		for (int i=1; i<=(int)sizeof(timexy)/4;i++) fprintf(file,"%f,",timexy[i]);
 		//fprintf(file,"\b");
 		fprintf(file,"];\n");
 		/*
@@ -49,7 +48,7 @@ class matlab
 		fprintf(file,"};\n");
 		*/
 		fprintf(file, "theta=[");
-		for (int i=1; i<=sizeof(theta)/4;i++) fprintf(file,"%f,",theta[i]);
+		for (int i=1; i<=(int)sizeof(theta)/4;i++) fprintf(file,"%f,",theta[i]);
 		//fprintf(file,"\b");
 		fprintf(file,"];\n");
 		fclose(file);  

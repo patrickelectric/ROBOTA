@@ -23,4 +23,5 @@
 #include "robotaMatlab.h"
 #include "filtro.h"
 
-VideoCapture cap(0);                /* declare video capture */
+//VideoCapture cap("/home/patrick/Área de Trabalho/Dropbox/Bolsa/Fluxo optico/Programas/video3.mp4");                /* declare video capture */
+VideoCapture cap(0);

@@ -19,12 +19,15 @@ int  serialArduino::sendByte(uint8_t b){
     if( n!=1)
         return -1;
     return 0;}
-int  serialArduino::begin(int baud,const char *port){
+int  serialArduino::begin(int baud,const char *port)
+{
 	fd = 0;
 	baudrate = B115200;
 	baudrate = baud;
     fd = serialport_init(port, baudrate);
-	if(fd==-1) return -1;}
+	if(fd==-1) return -1;
+    else return 0;
+}
 char serialArduino::reciveByte(){
     char b[1];
     int n=0;
