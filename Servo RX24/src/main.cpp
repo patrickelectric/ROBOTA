@@ -22,7 +22,7 @@ int main(int argc, char *argv[])
     Serial.local_usb="/dev/ttyO2";
     Serial.baudrate=57600;
 
-    //gpio pino;
+    gpio pino;
     /*
     if(argc<3) printf("Foi escolhido a porta /dev/ttyO2, ja que não foi colocado nenhum argumento\n");
     else
@@ -58,29 +58,37 @@ int main(int argc, char *argv[])
         //servo.setID(1,2);
         //sleep(1);
         servo.setServoMoveSpeed(1, 40);
-        usleep(10000);
+        sleep(1);
         servo.setServoMoveSpeed(2, 40);
-        sleep(4);
+        sleep(1);
         //servo.modeDC(1);
         //printf("torque,l,d\n");
         //servo.setTorque(1,0);
         //sleep(1);
         //printf("torque,valor\n");
         //servo.setServoTorque(1,atoi(argv[1]));
-        printf("0\n");
         servo.move(1,0);
-        usleep(10000);
+        sleep(1);
+        printf("pos(%d)=%d\n",1,servo.readPosition(1) );
+        usleep(1000);
+        printf("pos(%d)=%d\n",2,servo.readPosition(2) );
         servo.move(2,0);
-        sleep(3);
-        printf("350\n");
+        sleep(1);
         servo.move(1,350);
-        usleep(10000);
+        usleep(1000);
+        printf("pos(%d)=%d\n",1,servo.readPosition(1) );
+        usleep(1000);
         servo.move(2,350);
+        usleep(1000);
+        printf("pos(%d)=%d\n",2,servo.readPosition(2) );
         sleep(3);
-        printf("200\n");
         servo.move(1,200);
-        usleep(10000);
+        usleep(1000);
+        printf("pos(%d)=%d\n",1,servo.readPosition(1) );
+        usleep(1000);
         servo.move(2,200);
+        usleep(1000);
+        printf("pos(%d)=%d\n",2,servo.readPosition(2) );
         sleep(3);
         return 0;
     }

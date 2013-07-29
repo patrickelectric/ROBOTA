@@ -12,34 +12,40 @@
 */
 
 #include "protocolVals.h"
-#include "gpio.h"     /*lib to acces gpio pins*/
+#include "gpio.h"           /*lib to acces gpio pins*/
 
 //#define pinopen pino.pin(1);
 //#define pinclose pino.pin(0);
 //-----------------------------------------------------------------   
+
 erroRX RX24::readError()
 {
-  erroRX erro;
-  char buf [10];
+  erroRX erro;                            
+  char buf [10];                              //cria um buffer para captar a entrada serial e analizar
 
-  memset(buf, 0, sizeof(buf));
+  memset(buf, 0, sizeof(buf));                //limpa o buffer
   
   /*
   for(int i=0;i<sizeof buf;i++)
     printf("%x-",buf[i]);
   printf("<<<<<<<<<<<<<\n");
   */
+
   usleep(10);
-  tcflush(fd,TCIOFLUSH);
-  usleep(2700);
-  int n = read (fd, buf, sizeof buf);
+  tcflush(fd,TCIOFLUSH);                      //limpa o buffer da serial
+  usleep(2700);                               //espera ser realizado
+  int n = read (fd, buf, sizeof buf);         //faz a leitura da serial
+
   /*
   for(int i=0;i<sizeof buf;i++)
     printf("%x-",buf[i]);
   printf("<<<<<<<<<<<<<\n");
   */
+
   erro.erro=0;
-  for(int i=0;i<sizeof buf;i++)
+
+  //-----------------------------------------------------------------             // analiza os possiveis erros
+  for(int i=0;i<sizeof buf;i++)     
   {
     if(buf[i]==0xff && buf[i+1]==0xff)
     {
@@ -66,7 +72,8 @@ erroRX RX24::readError()
   return erro;
   
 }
-//-----------------------------------------------------------------   
+
+//-----------------------------------------------------------------             //funcao para fazer mapping
 long map(long x, long in_min, long in_mRX, long out_min, long out_mRX)          //map value
 {
   return (x - in_min) * (out_mRX - out_min) / (in_mRX - in_min) + out_min;
@@ -77,10 +84,10 @@ long round(long d)                                                              
   return (long)d;
 }
 
-//-----------------------------------------------------------------   
+//-----------------------------------------------------------------             //funcao para mover o cervo para uma posicao em modo servo
 int RX24::move(unsigned char ID, long positionInGrads)     //0-900        
 {
-  long goalPosition = positionInGrads; //long goalPosition = round(map(positionInGrads,0,300,0,1023));
+  long goalPosition = positionInGrads;      //long goalPosition = round(map(positionInGrads,0,300,0,1023));
       
   char Position_H,Position_L;
   Position_H = goalPosition >> 8; 
@@ -95,18 +102,18 @@ int RX24::move(unsigned char ID, long positionInGrads)     //0-900
   while ( TChecksum >= 255) TChecksum -= 255;     
   unsigned int checksum = 255 - TChecksum;
     
-  //pino.pin(1);
-  serialport_writebyte(RX_START);  // start byte 2
-  serialport_writebyte(RX_START);  //start byte 2
-  serialport_writebyte(ID);    // id
-  serialport_writebyte(RX_GOAL_LENGTH);     //length
-  serialport_writebyte(RX_WRITE_DATA);  //instruction
-  serialport_writebyte(RX_GOAL_POSITION_L); //ram address corresponding to the goal position
+  pino.pin(1);
+  serialport_writebyte(RX_START);       // start byte 2
+  serialport_writebyte(RX_START);       //start byte 2
+  serialport_writebyte(ID);             // id
+  serialport_writebyte(RX_GOAL_LENGTH);       //length
+  serialport_writebyte(RX_WRITE_DATA);        //instruction
+  serialport_writebyte(RX_GOAL_POSITION_L);   //ram address corresponding to the goal position
   serialport_writebyte(Position_L);
   serialport_writebyte(Position_H);
   serialport_writebyte(checksum);
   usleep(TX_DELAY_TIME);
-  //pino.pin(0);  
+  pino.pin(0);  
   return 0;  
 }
 
@@ -140,7 +147,7 @@ struct data
 
 //data data;
 
-
+//-----------------------------------------------------------------             //funcao para ler a posicao do servo
 int  RX24::readPosition(unsigned char ID)
 {
 
@@ -166,6 +173,8 @@ int  RX24::readPosition(unsigned char ID)
   serialport_writebyte(Checksum);
   usleep(10);
   pino.pin(0);
+
+  //------------------------------------------------------------------- Pega o  pagote na serial e analiza
   memset(buf, 0, sizeof(buf));
   usleep(10);
   tcflush(fd,TCIOFLUSH);
@@ -177,7 +186,6 @@ int  RX24::readPosition(unsigned char ID)
   int vel2=0;
   int vel=0;
   unsigned char checkCalc;
-
 
   for(int i=0;i<sizeof buf;i++)
   {
@@ -195,7 +203,7 @@ int  RX24::readPosition(unsigned char ID)
      // printf("checksum %x\n",buf[i+7]);
       //printf("%d\n",buf[i+6]<<8 + buf[i+5] );
      // printf("check ! = %x\n", ((unsigned char)(255) - ((unsigned char)buf[i+2] + (unsigned char)buf[i+3] + (unsigned char)buf[i+4] + (unsigned char)buf[i+5]+(unsigned char)buf[i+6])) );
-      checkCalc = ((unsigned char)(255) - ((unsigned char)buf[i+2] + (unsigned char)buf[i+3] + (unsigned char)buf[i+4] + (unsigned char)buf[i+5]+(unsigned char)buf[i+6]));
+      checkCalc =  ((unsigned char)(255) - ((unsigned char)buf[i+2] + (unsigned char)buf[i+3] + (unsigned char)buf[i+4] + (unsigned char)buf[i+5]+(unsigned char)buf[i+6]));
       vel1=i;
       i=sizeof buf;
     }
@@ -204,14 +212,14 @@ int  RX24::readPosition(unsigned char ID)
   {
     //printf("ok !!!!!\n");
     //printf("pos: %d\n",vel );
-    return vel;
+    return vel;                             //retorna posicao 
   }
   else
     //printf("no !!!!!\n");
-    return 666;
+    return 666;                             //reporta um erro
 }
 
-
+//------------------------------------------------------------------- Le o torque maximo aplicado
 int  RX24::readMaxTorque(unsigned char ID)
 {
 
@@ -282,7 +290,7 @@ int  RX24::readMaxTorque(unsigned char ID)
 }
 
 
-//-----------------------------------------------------------------   
+//------------------------------------------------------------------- Seta a velocidade do servo      
 int RX24::setServoMoveSpeed(unsigned char ID, unsigned char moveSpeed)
 {
   moveSpeed = round(map(moveSpeed,0,114,0,1023));
@@ -301,7 +309,7 @@ int RX24::setServoMoveSpeed(unsigned char ID, unsigned char moveSpeed)
     TChecksum -= 255;     
   }          
   unsigned int checksum = 255 - TChecksum;
-  //pino.pin(1);
+  pino.pin(1);
   serialport_writebyte(RX_START);  // start byte 2
   serialport_writebyte(RX_START);  //start byte 2
   serialport_writebyte(ID);    // id
@@ -312,13 +320,13 @@ int RX24::setServoMoveSpeed(unsigned char ID, unsigned char moveSpeed)
   serialport_writebyte(Speed_H);
   serialport_writebyte(checksum);
   usleep(TX_DELAY_TIME);
-  //pino.pin(0);
-  //return readError();  
+  pino.pin(0);
+  return readError();  
   return 0;
 }
 
 
-//-----------------------------------------------------------------   
+//-----------------------------------------------------------------   Seta o torque do servo
 int RX24::setServoTorque(unsigned char ID, unsigned int moveSpeed)
 {
 
@@ -358,7 +366,7 @@ int RX24::setServoTorque(unsigned char ID, unsigned int moveSpeed)
 
 }
 
-//-----------------------------------------------------------------   
+//-----------------------------------------------------------------   Reseta para os padroes de fabrica
 int RX24::resetToFactoryDefault(unsigned char ID)
 {
   unsigned int TChecksum = (ID + 0x02 + RX_RESET);
@@ -367,7 +375,7 @@ int RX24::resetToFactoryDefault(unsigned char ID)
   }
   unsigned int Checksum = 255 - TChecksum;
     
-  //pino.pin(1);      // Set Tx Mode
+  pino.pin(1);      // Set Tx Mode
   serialport_writebyte(RX_START);                 // Send Instructions over Serial1
   serialport_writebyte(RX_START);
   serialport_writebyte(ID);
@@ -375,13 +383,13 @@ int RX24::resetToFactoryDefault(unsigned char ID)
   serialport_writebyte(RX_RESET);
   serialport_writebyte(Checksum);
   usleep(TX_DELAY_TIME);
-  //pino.pin(0);       // Set Rx Mode  
+  pino.pin(0);       // Set Rx Mode  
   //return readError();         
   return 0;
 } 
 
 
-//-----------------------------------------------------------------  
+//-----------------------------------------------------------------  Muda o ID de um servo
 int RX24::setID(unsigned char oldID, unsigned char newID)
 {
   
@@ -395,7 +403,7 @@ int RX24::setID(unsigned char oldID, unsigned char newID)
   }
  unsigned int checksum = 255 - TChecksum;         
 
-  //pino.pin(1);
+  pino.pin(1);
   serialport_writebyte(RX_START);               
   serialport_writebyte(RX_START);
   serialport_writebyte(oldID);
@@ -405,13 +413,13 @@ int RX24::setID(unsigned char oldID, unsigned char newID)
   serialport_writebyte(newID);
   serialport_writebyte(checksum);
   usleep(TX_DELAY_TIME);
-  //pino.pin(0);
+  pino.pin(0);
   //return readError();                 
   return 0;
 }
 
 
-//-----------------------------------------------------------------  
+//-----------------------------------------------------------------  Modifica o Baudrate do servo
 int RX24::setBaud(unsigned char ID, unsigned char baud)
 {        
   unsigned int TChecksum = (ID + 
@@ -440,7 +448,7 @@ int RX24::setBaud(unsigned char ID, unsigned char baud)
   return 0;
 }
 
-//-----------------------------------------------------------------   
+//-----------------------------------------------------------------   Muda o estado do led 
 erroRX RX24::setLed(unsigned char ID, unsigned char value)
 {
   unsigned int TChecksum = (ID + RX_LED_LENGTH + RX_WRITE_DATA + RX_LED + value);
@@ -466,7 +474,7 @@ erroRX RX24::setLed(unsigned char ID, unsigned char value)
 }
 
 
-//-----------------------------------------------------------------   
+//-----------------------------------------------------------------   //setar o modo Torque no servo
 int RX24::setTorque(unsigned char ID, unsigned char value)
 {
   unsigned int TChecksum = (ID + RX_LED_LENGTH + RX_WRITE_DATA + RX_TORQUE_ENABLE + value);
@@ -490,7 +498,9 @@ int RX24::setTorque(unsigned char ID, unsigned char value)
   return  0;
 }
 
-int RX24::send(unsigned char ID,unsigned char ALGO ,unsigned char value)
+
+//-----------------------------------------------------------------   //Muda o valor em um local da memoria
+int RX24::send(unsigned char ID,unsigned char ALGO ,unsigned char value)  
 {
   unsigned int TChecksum = (ID + RX_LED_LENGTH + RX_WRITE_DATA + ALGO + value);
   while ( TChecksum >= 255){            
@@ -498,7 +508,6 @@ int RX24::send(unsigned char ID,unsigned char ALGO ,unsigned char value)
   }
   unsigned int Checksum = 255 - TChecksum;
     
-  //digitalWrite(controlPin,HIGH);      // Set Tx Mode
   pino.pin(1);
   serialport_writebyte(RX_START);                 // Send Instructions over Serial
   serialport_writebyte(RX_START);
@@ -511,12 +520,12 @@ int RX24::send(unsigned char ID,unsigned char ALGO ,unsigned char value)
   serialport_writebyte(Checksum);
   usleep(TX_DELAY_TIME);
   pino.pin(0);
-//  digitalWrite(controlPin,LOW);       // Set Rx Mode
   
 //  return readError();
 }
 
-//-----------------------------------------------------------------   
+
+//-----------------------------------------------------------------   //ativa o modo dc
 int RX24::modeDC(unsigned char ID){
    char cwAngleLimit_H, cwAngleLimit_L, ccwAngleLimit_H, ccwAngleLimit_L ;
    cwAngleLimit_H = 0x00; 
@@ -556,6 +565,8 @@ int RX24::modeDC(unsigned char ID){
   //return readError();  
 }
 
+
+//-----------------------------------------------------------------   //desativa o modo dc
 int RX24::modeDCoff(unsigned char ID){
    char cwAngleLimit_H, cwAngleLimit_L, ccwAngleLimit_H, ccwAngleLimit_L ;
    cwAngleLimit_H = 0xff; 
@@ -597,7 +608,7 @@ int RX24::modeDCoff(unsigned char ID){
   readError();  
 }
 
-
+//-----------------------------------------------------------------   //Coloca o torque maximo no maximo
 int RX24::modeTorqueMax(unsigned char ID){
   char cwAngleLimit_H, cwAngleLimit_L, ccwAngleLimit_H, ccwAngleLimit_L ;
    char torque_H=0xff, torque_L=0x00;
@@ -634,7 +645,8 @@ int RX24::modeTorqueMax(unsigned char ID){
   readError();  
 }
 
-//-----------------------------------------------------------------   
+
+//-----------------------------------------------------------------  Direcao e velocidade do servo, alem de setar o modo dc
 int RX24::setDCMode(unsigned char ID, unsigned char moveDir, int moveSpeed){
    /*
     in this mode, the moving speed can be controlled by
@@ -680,7 +692,7 @@ int RX24::setDCMode(unsigned char ID, unsigned char moveDir, int moveSpeed){
   
 }
 
-//-----------------------------------------------------------------   
+//-----------------------------------------------------------------   Seta o modo em servo
 int RX24::setServoMode(unsigned char ID, unsigned int cwLimit, unsigned int ccwLimit){
   char cwAngleLimit_H, cwAngleLimit_L, ccwAngleLimit_H, ccwAngleLimit_L ;
   cwAngleLimit_H = cwLimit >> 8; 

@@ -23,12 +23,12 @@
 #include <math.h> 	  /* Math lib*/
 #include <errno.h>    /* Error number definitions */
 #include <termios.h>  /* POSIX terminal control definitions */
-#include <pthread.h>
-#include <math.h>
-#include <time.h>
+#include <pthread.h>  /* Lib for threads use */
+#include <math.h>	  /* Lib for Math use */
+#include <time.h>     /* Lib to use time functions */
 #include "serial.h"   /* lib for serial comunication */
 #include "protocolVals.h"  /* Protocol values to servo comunication  */
 #include "protocolFunct.h"  /* Protocol functions to servo comunication  */
-#include "Cronometer.cpp"
+#include "Cronometer.cpp"	/* Lib for cronometer the time function */
 
 /***************************LIBS*****************************/
