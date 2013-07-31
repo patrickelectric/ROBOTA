@@ -146,7 +146,6 @@ int main(int argc, char *argv[])
    	valtovalue();
 
     /********************************************/
-    setVW(0,1);
     
     pthread_t get_img; 
     pthread_t filter_rgb,filter_hsv,filter_analise; //filters
