@@ -189,7 +189,7 @@ TOOLCHAINCONFIG:FILEPATH=TOOLCHAINCONFIG-NOTFOUND
 USERCONFIG:FILEPATH=USERCONFIG-NOTFOUND
 
 //Path to a file.
-_file_name:FILEPATH=/home/patrick/ros_workspace/robotaTurtle/src/main.cpp
+_file_name:FILEPATH=/home/patrick/ros_workspace/robotaTurtle/src/camera_publish.cpp
 
 //Value Computed by CMake
 robotaTurtle_BINARY_DIR:STATIC=/home/patrick/ros_workspace/robotaTurtle/build

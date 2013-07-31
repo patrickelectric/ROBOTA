@@ -37,7 +37,8 @@ int last_msg; //ultima mensagem enviada pela serial
 using namespace cv;
 
 char programName[64]="main.cpp"; /* program name */
-char topicName[64]="/gscam/image_raw"; /* image topic */
+char topicName[64]="gscam/image_raw"; /* image topic */
+char topicVel[64]="/p3at/cmd_vel";
 
 serialArduino uno; 
 
@@ -107,7 +108,7 @@ int main(int argc, char *argv[])
     
 
     ros::NodeHandle nh_;
-    vel_pub_ = nh_.advertise<geometry_msgs::Twist>("/cmd_vel", 10000);
+    vel_pub_ = nh_.advertise<geometry_msgs::Twist>(topicVel, 10000);
     ros::NodeHandle nh;
     image_transport::ImageTransport it(nh);
     image_transport::Subscriber sub = it.subscribe(topicName, 1, imageCallback);
@@ -425,8 +426,8 @@ void *filter_leanalise (void *)
         printf("PW: %.2f\n",PW );
         printf("PL//ANGULAR %d\n",(int)(240-(PL)*240/1.6));
         printf("PW//LINEAR: %d\n",(int)(240-285*(PW)) );
-        line(copyFrame,Point(copyFrame.cols-2,copyFrame.rows/2),Point(copyFrame.cols-2, (int)(240-285*(PW))),green,3); //linear
-        line(copyFrame, Point(copyFrame.cols-7,copyFrame.rows/2) , Point(copyFrame.cols-7,(int)(240-(PL)*240/1.6)),red,3);   //angular
+        line(copyFrame,Point(copyFrame.cols-2,copyFrame.rows/2),Point(copyFrame.cols-2, (int)(120-285*(PW))),green,3); //linear
+        line(copyFrame, Point(copyFrame.cols-7,copyFrame.rows/2) , Point(copyFrame.cols-7,(int)(120-(PL)*240/1.6)),red,3);   //angular
         
         //QUADRANTES
         //int numQuadrantes=4;
@@ -454,8 +455,9 @@ void *filter_leanalise (void *)
         */
 
 
-        vel.angular.z = -PL;
-        vel.linear.x = PW;
+        vel.angular.z = -PL/3;
+        //vel.linear.x = 0;
+        vel.linear.x = PW/4;
         //if (vel.linear.x<0) vel.linear.x =0.0;
         /*
         if (vel.linear.x>0.7) vel.linear.x =0.7;

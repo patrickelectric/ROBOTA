@@ -174,6 +174,41 @@ clean: CMakeFiles/ROSBUILD_gensrv_lisp.dir/clean
 .PHONY : clean
 
 #=============================================================================
+# Target rules for target CMakeFiles/camera_publish.dir
+
+# All Build rule for target.
+CMakeFiles/camera_publish.dir/all: CMakeFiles/rosbuild_precompile.dir/all
+	$(MAKE) -f CMakeFiles/camera_publish.dir/build.make CMakeFiles/camera_publish.dir/depend
+	$(MAKE) -f CMakeFiles/camera_publish.dir/build.make CMakeFiles/camera_publish.dir/build
+	$(CMAKE_COMMAND) -E cmake_progress_report /home/patrick/ros_workspace/robotaTurtle/build/CMakeFiles  1
+	@echo "Built target camera_publish"
+.PHONY : CMakeFiles/camera_publish.dir/all
+
+# Include target in all.
+all: CMakeFiles/camera_publish.dir/all
+.PHONY : all
+
+# Build rule for subdir invocation for target.
+CMakeFiles/camera_publish.dir/rule: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/patrick/ros_workspace/robotaTurtle/build/CMakeFiles 1
+	$(MAKE) -f CMakeFiles/Makefile2 CMakeFiles/camera_publish.dir/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/patrick/ros_workspace/robotaTurtle/build/CMakeFiles 0
+.PHONY : CMakeFiles/camera_publish.dir/rule
+
+# Convenience name for target.
+camera_publish: CMakeFiles/camera_publish.dir/rule
+.PHONY : camera_publish
+
+# clean rule for target.
+CMakeFiles/camera_publish.dir/clean:
+	$(MAKE) -f CMakeFiles/camera_publish.dir/build.make CMakeFiles/camera_publish.dir/clean
+.PHONY : CMakeFiles/camera_publish.dir/clean
+
+# clean rule for target.
+clean: CMakeFiles/camera_publish.dir/clean
+.PHONY : clean
+
+#=============================================================================
 # Target rules for target CMakeFiles/clean-test-results.dir
 
 # All Build rule for target.
@@ -211,7 +246,7 @@ clean: CMakeFiles/clean-test-results.dir/clean
 CMakeFiles/detector.dir/all: CMakeFiles/rosbuild_precompile.dir/all
 	$(MAKE) -f CMakeFiles/detector.dir/build.make CMakeFiles/detector.dir/depend
 	$(MAKE) -f CMakeFiles/detector.dir/build.make CMakeFiles/detector.dir/build
-	$(CMAKE_COMMAND) -E cmake_progress_report /home/patrick/ros_workspace/robotaTurtle/build/CMakeFiles  1
+	$(CMAKE_COMMAND) -E cmake_progress_report /home/patrick/ros_workspace/robotaTurtle/build/CMakeFiles  2
 	@echo "Built target detector"
 .PHONY : CMakeFiles/detector.dir/all
 

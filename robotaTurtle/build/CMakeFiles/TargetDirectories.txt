@@ -2,6 +2,7 @@
 /home/patrick/ros_workspace/robotaTurtle/build/CMakeFiles/ROSBUILD_genmsg_lisp.dir
 /home/patrick/ros_workspace/robotaTurtle/build/CMakeFiles/ROSBUILD_gensrv_cpp.dir
 /home/patrick/ros_workspace/robotaTurtle/build/CMakeFiles/ROSBUILD_gensrv_lisp.dir
+/home/patrick/ros_workspace/robotaTurtle/build/CMakeFiles/camera_publish.dir
 /home/patrick/ros_workspace/robotaTurtle/build/CMakeFiles/clean-test-results.dir
 /home/patrick/ros_workspace/robotaTurtle/build/CMakeFiles/detector.dir
 /home/patrick/ros_workspace/robotaTurtle/build/CMakeFiles/rosbuild_precompile.dir

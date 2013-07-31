@@ -148,6 +148,19 @@ ROSBUILD_gensrv_lisp/fast:
 .PHONY : ROSBUILD_gensrv_lisp/fast
 
 #=============================================================================
+# Target rules for targets named camera_publish
+
+# Build rule for target.
+camera_publish: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 camera_publish
+.PHONY : camera_publish
+
+# fast build rule for target.
+camera_publish/fast:
+	$(MAKE) -f CMakeFiles/camera_publish.dir/build.make CMakeFiles/camera_publish.dir/build
+.PHONY : camera_publish/fast
+
+#=============================================================================
 # Target rules for targets named clean-test-results
 
 # Build rule for target.
@@ -304,6 +317,21 @@ tests/fast:
 .PHONY : tests/fast
 
 # target to build an object file
+src/camera_publish.o:
+	$(MAKE) -f CMakeFiles/camera_publish.dir/build.make CMakeFiles/camera_publish.dir/src/camera_publish.o
+.PHONY : src/camera_publish.o
+
+# target to preprocess a source file
+src/camera_publish.i:
+	$(MAKE) -f CMakeFiles/camera_publish.dir/build.make CMakeFiles/camera_publish.dir/src/camera_publish.i
+.PHONY : src/camera_publish.i
+
+# target to generate assembly for a file
+src/camera_publish.s:
+	$(MAKE) -f CMakeFiles/camera_publish.dir/build.make CMakeFiles/camera_publish.dir/src/camera_publish.s
+.PHONY : src/camera_publish.s
+
+# target to build an object file
 src/main.o:
 	$(MAKE) -f CMakeFiles/detector.dir/build.make CMakeFiles/detector.dir/src/main.o
 .PHONY : src/main.o
@@ -328,6 +356,7 @@ help:
 	@echo "... ROSBUILD_genmsg_lisp"
 	@echo "... ROSBUILD_gensrv_cpp"
 	@echo "... ROSBUILD_gensrv_lisp"
+	@echo "... camera_publish"
 	@echo "... clean-test-results"
 	@echo "... detector"
 	@echo "... edit_cache"
@@ -342,6 +371,9 @@ help:
 	@echo "... test-results"
 	@echo "... test-results-run"
 	@echo "... tests"
+	@echo "... src/camera_publish.o"
+	@echo "... src/camera_publish.i"
+	@echo "... src/camera_publish.s"
 	@echo "... src/main.o"
 	@echo "... src/main.i"
 	@echo "... src/main.s"
