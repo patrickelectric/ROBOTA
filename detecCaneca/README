@@ -10,4 +10,7 @@
 #
 # Summary:     codigo de detecção da caneca do RU
 #   		   comentado e finalizado com o filtro de primeiro ordem 
+#			   adicionado variaveis de debug e thread de controle	
+#			   para modificação das variaveis de fruto, utilizar o programa debugador
+#              clicando com o boão direito e esquerdo do mouse ate aparecer o X vermelho
 */

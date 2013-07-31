@@ -102,7 +102,7 @@
 #define RX_START                    255
 #define BUFFER_SIZE		            64
 #define TIME_OUT                    10
-#define TX_DELAY_TIME		       160 //160
+#define TX_DELAY_TIME		       600 //160
  
 #define RX_DC_CW                    1
 #define RX_DC_CCW                   0

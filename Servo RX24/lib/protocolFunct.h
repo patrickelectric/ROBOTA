@@ -45,7 +45,7 @@ erroRX RX24::readError()
   erro.erro=0;
 
   //-----------------------------------------------------------------             // analiza os possiveis erros
-  for(int i=0;i<sizeof buf;i++)     
+  for(int i=0;i<(int)sizeof buf;i++)     
   {
     if(buf[i]==0xff && buf[i+1]==0xff)
     {
@@ -113,7 +113,8 @@ int RX24::move(unsigned char ID, long positionInGrads)     //0-900
   serialport_writebyte(Position_H);
   serialport_writebyte(checksum);
   usleep(TX_DELAY_TIME);
-  pino.pin(0);  
+  pino.pin(0); 
+  readError();   
   return 0;  
 }
 
@@ -171,7 +172,7 @@ int  RX24::readPosition(unsigned char ID)
   serialport_writebyte(RX_PRESENT_POSITION_L);
   serialport_writebyte(RX_BYTE_READ_POS);
   serialport_writebyte(Checksum);
-  usleep(10);
+  usleep(TX_DELAY_TIME);
   pino.pin(0);
 
   //------------------------------------------------------------------- Pega o  pagote na serial e analiza
@@ -187,28 +188,31 @@ int  RX24::readPosition(unsigned char ID)
   int vel=0;
   unsigned char checkCalc;
 
-  for(int i=0;i<sizeof buf;i++)
+  for(int i=0;i<(int)sizeof buf;i++)
   {
-    //printf("%x-\n",buf[i] );
+    printf("--%d\n",buf[i] );
     if(buf[i]==0xff && buf[i+1]==0xff)
     {
-     // printf("i: %d\n",i );
-     // printf("ID: %x\n",buf[i+2] ); 
-     // printf("ERRO: %x\n",buf[i+4] ); 
-     // printf("data: %x\n",buf[i+5] ); 
-     // printf("data: %x\n",buf[i+6] ); 
+      printf("i: %d\n",i );
+      printf("start %d\n",buf[i] );
+      printf("start %d\n",buf[i+1] );
+      printf("ID: %d\n",buf[i+2] ); 
+      printf("LENGHT: %d\n",buf[i+3] ); 
+      printf("ERRO: %d\n",buf[i+4] ); 
+      printf("data: %d\n",buf[i+5] ); 
+      printf("data: %d\n",buf[i+6] ); 
       vel1=buf[i+6] <<8 ;
       vel2=buf[i+5];
       vel= vel1+vel2;
-     // printf("checksum %x\n",buf[i+7]);
-      //printf("%d\n",buf[i+6]<<8 + buf[i+5] );
-     // printf("check ! = %x\n", ((unsigned char)(255) - ((unsigned char)buf[i+2] + (unsigned char)buf[i+3] + (unsigned char)buf[i+4] + (unsigned char)buf[i+5]+(unsigned char)buf[i+6])) );
+      printf("checksum %d\n",buf[i+7]);
+      printf("%d\n",buf[i+6]<<8 + buf[i+5] );
+      printf("check ! = %d\n", ((unsigned char)(255) - ((unsigned char)buf[i+2] + (unsigned char)buf[i+3] + (unsigned char)buf[i+4] + (unsigned char)buf[i+5]+(unsigned char)buf[i+6])) );
       checkCalc =  ((unsigned char)(255) - ((unsigned char)buf[i+2] + (unsigned char)buf[i+3] + (unsigned char)buf[i+4] + (unsigned char)buf[i+5]+(unsigned char)buf[i+6]));
       vel1=i;
       i=sizeof buf;
     }
   }
-  if((unsigned char)buf[vel1+7]==checkCalc)
+  if((unsigned char)buf[vel1+7]==checkCalc && checkCalc!=0)
   {
     //printf("ok !!!!!\n");
     //printf("pos: %d\n",vel );
@@ -254,12 +258,11 @@ int  RX24::readMaxTorque(unsigned char ID)
   int n = read (fd, buf, sizeof buf);
 
   int vel1;
-  int vel2;
   int vel=0;
   unsigned char checkCalc;
 
   //pino.pin(0);
-  for(int i=0;i<sizeof buf;i++)
+  for(int i=0;i<(int)sizeof buf;i++)
   {
     //printf("%x-\n",buf[i] );
     if(buf[i]==0xff && buf[i+1]==0xff)
@@ -321,8 +324,7 @@ int RX24::setServoMoveSpeed(unsigned char ID, unsigned char moveSpeed)
   serialport_writebyte(checksum);
   usleep(TX_DELAY_TIME);
   pino.pin(0);
-  return readError();  
-  return 0;
+  //return readError();  
 }
 
 
@@ -562,7 +564,7 @@ int RX24::modeDC(unsigned char ID){
   usleep(TX_DELAY_TIME);
   pino.pin(0);
                        
-  //return readError();  
+  readError();  
 }
 
 
@@ -603,17 +605,17 @@ int RX24::modeDCoff(unsigned char ID){
   serialport_writebyte(ccwAngleLimit_H);
   serialport_writebyte(checksum);
   usleep(TX_DELAY_TIME);
-  pino.pin(0);
-                       
-  readError();  
+  pino.pin(0);              
+  //readError();  
 }
 
 //-----------------------------------------------------------------   //Coloca o torque maximo no maximo
+/*
 int RX24::modeTorqueMax(unsigned char ID){
   char cwAngleLimit_H, cwAngleLimit_L, ccwAngleLimit_H, ccwAngleLimit_L ;
    char torque_H=0xff, torque_L=0x00;
-   cwAngleLimit_L=torque_L;
-   cwAngleLimit_H=torque_H;
+   //cwAngleLimit_L=torque_L;
+   //cwAngleLimit_H=torque_H;
    int PACKET_LENGTH = 4;
    unsigned int TChecksum = (ID +
                              PACKET_LENGTH + 
@@ -644,7 +646,7 @@ int RX24::modeTorqueMax(unsigned char ID){
                        
   readError();  
 }
-
+*/
 
 //-----------------------------------------------------------------  Direcao e velocidade do servo, alem de setar o modo dc
 int RX24::setDCMode(unsigned char ID, unsigned char moveDir, int moveSpeed){

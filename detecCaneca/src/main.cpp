@@ -38,7 +38,6 @@ using namespace cv;
 
 char programName[64]="main.cpp"; /* program name */
 
-serialArduino uno; 
 
 /************************************************/  //variaveis de imagem global
 Mat frame;
@@ -54,9 +53,7 @@ int colorRange =15;       //radio de detcção rgb e hsv
 pthread_mutex_t emframe = PTHREAD_MUTEX_INITIALIZER; 
 pthread_mutex_t emframe_hsv = PTHREAD_MUTEX_INITIALIZER; 
 pthread_mutex_t emframe_rgb = PTHREAD_MUTEX_INITIALIZER; 
-
-pthread_cond_t newhsvFilter;          /*libera rgb filter, final process*/
-pthread_cond_t newrgbFilter;          /*libera hsv filter, final process*/
+pthread_mutex_t emvetor = PTHREAD_MUTEX_INITIALIZER;
 /************************************************/  
 
 /********************FUNCTIONS*******************/
@@ -71,6 +68,8 @@ void *streaming(void *);                //thread que faz a captura de imagens da
 void *filter_lergb (void *);            //thread que faz o filtro rgb
 void *filter_lehsv (void *);            //thread que faz o filtro hsv
 void *filter_leanalise (void *);        //filtro que faz a fusao dos dois filtros
+void *thread_leControle(void *);          //thread de controle 
+
 
 infoImg lata_x(Mat image);              //funcao que recebe a imagem do filtro final e responde a posicao da lata
 /********************FUNCTIONS*******************/
@@ -81,18 +80,18 @@ rgb valueh;             /*hsv*/
 infoImg localCan;       /*info of imag process*/
 bool matlabBool=false;  /*boolean to control Matlab functions*/
 bool boolShow=true;    /*boolean to control show image*/
-bool boolPrint=true;    /*boolean to printf control*/
+bool boolPrint=false;    /*boolean to printf control*/
 Cronometer crono;       /*cronometer 1*/
 Cronometer crono2;      /*cronometer 2*/
 char text[20];          /*text to make some functions*/
+vetor vetorAnalise;
 /********************DECLARATIONS****************/
 
 /**********************MAIN**********************/
 int main(int argc, char *argv[])
 {
-    uno.begin(9600,"/dev/ttyUSB0"); //inicia a comunicacao serial
+    mega.begin(9600,"/dev/ttyACM0");//inicia a comunicacao serial
     usleep(10);                     //espeta a comunicacao ser feita
-    uno.sendByte(0);                //manda o robo para
 
 
     start_fps();					//inicia a captura do fps
@@ -147,26 +146,48 @@ int main(int argc, char *argv[])
    	valtovalue();
 
     /********************************************/
-
+    setVW(0,1);
     
     pthread_t get_img; 
     pthread_t filter_rgb,filter_hsv,filter_analise; //filters
+    pthread_t thread_Controle;
 
     
     pthread_create(&get_img, NULL, streaming , NULL);               // take imag from camera
     pthread_create(&filter_rgb, NULL, filter_lergb , NULL);         // filters
     pthread_create(&filter_hsv, NULL, filter_lehsv , NULL);         // filters
     pthread_create(&filter_analise, NULL, filter_leanalise , NULL); // Analize o filtro
+    pthread_create(&thread_Controle, NULL, thread_leControle,NULL); // thread de controle
 
     
     pthread_join(get_img,NULL);
     pthread_join(filter_rgb,NULL);
     pthread_join(filter_hsv,NULL);
     pthread_join(filter_analise,NULL);
+    pthread_join(thread_Controle,NULL);
     
     return 0;
 }
 /**********************MAIN**********************/
+
+/************************************************/    // THREAD DE CONTROLE
+void *thread_leControle(void *)
+{
+    while(1)
+    {
+        //o vetor tem o angulo -90 e +90
+        //assim como o modulo maximo de 1
+        vetor vetorControle;
+        pthread_mutex_lock(&emvetor);
+        vetorControle = vetorAnalise;
+        pthread_mutex_unlock(&emvetor);
+        printf("controle : %f,%f\n",vetorControle.angulo,vetorControle.modulo);
+        sleep(1);
+    }
+
+    return 0;
+}
+
 
 /************************************************/
 
@@ -343,8 +364,6 @@ void *filter_lehsv (void *)     /*make the filter of hsv image*/
         cvtColor(image,frame_hsv,CV_RGB2HSV);
         takeHsv_RgbTrack();
         pthread_mutex_unlock(&emframe_hsv);
-
-        pthread_cond_signal(&newhsvFilter);
         
     }
     return 0;
@@ -369,7 +388,6 @@ void *filter_lergb (void *)     /*make the rgb filter*/
         takeOriginal_RgbTrack();
         pthread_mutex_unlock(&emframe_rgb);
 
-        pthread_cond_signal(&newrgbFilter);
         /*        
         namedWindow("rgb", CV_WINDOW_FREERATIO);
         imshow("rgb",resposta_hsv);
@@ -394,8 +412,6 @@ void *filter_leanalise (void *)
     {
         if(matlabBool)
             crono2.startCrono();
-        pthread_cond_init(&newrgbFilter, NULL);
-        pthread_cond_init(&newhsvFilter, NULL);
         pthread_mutex_lock(&emframe);
         frame.copyTo(copyFrame);
         pthread_mutex_unlock(&emframe);
@@ -411,6 +427,12 @@ void *filter_leanalise (void *)
         bitwise_and(hsvFilter,rgbFilter,finalFilter,Mat());
         
         localCan = lata_x(finalFilter);
+
+        pthread_mutex_lock(&emvetor);
+        vetorAnalise.modulo = sqrt( pow(localCan.x-copyFrame.cols/2,2) + pow(copyFrame.rows-localCan.y,2));
+        vetorAnalise.modulo = fmap(vetorAnalise.modulo,0,289,0,1);
+        vetorAnalise.angulo = atan(-(copyFrame.cols/2-localCan.x+0.0000000001)/(copyFrame.rows-localCan.y+0.0000000001))*180/pi;
+        pthread_mutex_unlock(&emvetor);
         
         /*
         namedWindow("hsv", CV_WINDOW_FREERATIO);
@@ -430,12 +452,13 @@ void *filter_leanalise (void *)
         //BARRAS
         lelesco++;
         float PW,PL;
-        PW=sin(lelesco);
-        PL=-PW;
+        PW=sqrt(pow((640-localCan.x-320),2)+pow((480-localCan.y),2))*cos(atan(-(copyFrame.cols/2-localCan.x+0.0000000001)/(copyFrame.rows-localCan.y-0.0000000001)))/577; //linear
+        if(PW>0.01) PL=atan(-(copyFrame.cols/2-localCan.x+0.0000000001)/(copyFrame.rows-localCan.y-0.0000000001));  //angular
+            else PL=0;
         if(boolShow)
         {
-            line(copyFrame,Point(copyFrame.cols-2,copyFrame.rows/2),Point(copyFrame.cols-2,(int)(PW*239+copyFrame.rows/2)),green,3); //bars
-            line(copyFrame,Point(copyFrame.cols-7,copyFrame.rows/2),Point(copyFrame.cols-7,(int)(PL*239+copyFrame.rows/2)),red,3);   //bars
+            line(copyFrame,Point(copyFrame.cols-2,copyFrame.rows/2),Point(copyFrame.cols-2,(int)(120-100*(PW))),green,3); //bars
+            line(copyFrame,Point(copyFrame.cols-7,copyFrame.rows/2),Point(copyFrame.cols-7,(int)(120-(PL)*120/1.6)),red,3);   //bars
         }
         //QUADRANTES
         if(boolShow)
@@ -471,9 +494,11 @@ void *filter_leanalise (void *)
         # Aqui esta é o melhor lugar para trabalhar com isso, a melhor ideia seria uma function para fazer o calculo de PW e PL
         # onde todos os dados ja estão prontos
         */
+        //sendPkg(0,0,0);
 
 
         /* logica para seguir a caneca */
+        /*
         if (localCan.erro<-copyFrame.cols/4 && last_msg!=3) 
         {
             uno.sendByte(esquerda+potencia);
@@ -498,6 +523,7 @@ void *filter_leanalise (void *)
             uno.sendByte(0);
             last_msg=0;
         }
+        */
     
         /*function to save data for matlab*/
         if(matlabBool==true)
@@ -533,11 +559,15 @@ void *filter_leanalise (void *)
             }
 
         /* mostra o resultado do local da caneca */
-        //namedWindow("resposta", CV_WINDOW_FREERATIO);
-        if(boolShow)    
+        if(boolShow)  
+        {
+            namedWindow("resposta", CV_WINDOW_FREERATIO);
             imshow("resposta",copyFrame);                             //mostrar a resposta
+        }
         end_fps();
         waitKey(30);
     }
     return 0;
 }
+
+

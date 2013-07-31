@@ -1,0 +1,16 @@
+/home/patrick/ros_workspace/robotaTurtle/build/CMakeFiles/ROSBUILD_genmsg_cpp.dir
+/home/patrick/ros_workspace/robotaTurtle/build/CMakeFiles/ROSBUILD_genmsg_lisp.dir
+/home/patrick/ros_workspace/robotaTurtle/build/CMakeFiles/ROSBUILD_gensrv_cpp.dir
+/home/patrick/ros_workspace/robotaTurtle/build/CMakeFiles/ROSBUILD_gensrv_lisp.dir
+/home/patrick/ros_workspace/robotaTurtle/build/CMakeFiles/clean-test-results.dir
+/home/patrick/ros_workspace/robotaTurtle/build/CMakeFiles/detector.dir
+/home/patrick/ros_workspace/robotaTurtle/build/CMakeFiles/rosbuild_precompile.dir
+/home/patrick/ros_workspace/robotaTurtle/build/CMakeFiles/rosbuild_premsgsrvgen.dir
+/home/patrick/ros_workspace/robotaTurtle/build/CMakeFiles/rospack_genmsg.dir
+/home/patrick/ros_workspace/robotaTurtle/build/CMakeFiles/rospack_genmsg_libexe.dir
+/home/patrick/ros_workspace/robotaTurtle/build/CMakeFiles/rospack_gensrv.dir
+/home/patrick/ros_workspace/robotaTurtle/build/CMakeFiles/test.dir
+/home/patrick/ros_workspace/robotaTurtle/build/CMakeFiles/test-future.dir
+/home/patrick/ros_workspace/robotaTurtle/build/CMakeFiles/test-results.dir
+/home/patrick/ros_workspace/robotaTurtle/build/CMakeFiles/test-results-run.dir
+/home/patrick/ros_workspace/robotaTurtle/build/CMakeFiles/tests.dir

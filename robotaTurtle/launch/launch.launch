@@ -1,0 +1,6 @@
+<launch>
+  <node pkg="robotaTurtle" name="detector" type="detector" />
+  <include file="/opt/ros/fuerte/stacks/turtlebot_simulator/turtlebot_gazebo/launch/turtlebot_empty_world.launch" />
+  <!-- não funciona perfeitamente pois a camera precisa estar funcionando antes do preocessamento de imagem-->
+</launch>
+

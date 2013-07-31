@@ -22,6 +22,24 @@
 #include "serialArduino.cpp"
 #include "robotaMatlab.h"
 #include "filtro.h"
+#include "serialTest.cpp"
 
 //VideoCapture cap("/home/patrick/Área de Trabalho/Dropbox/Bolsa/Fluxo optico/Programas/video3.mp4");                /* declare video capture */
 VideoCapture cap(0);
+
+struct vetor
+{
+	float modulo;
+	float angulo;
+};
+
+//-----------------------------------------------------------------             //funcao para fazer mapping
+float fmap(float x, float in_min, float in_mRX, float out_min, float out_mRX)          //map value
+{
+	/*
+	printf("%f\n",(x - in_min));
+	printf("%f\n",((x - in_min)*(out_mRX - out_min)));
+	printf("%f\n",(((x - in_min)*(out_mRX - out_min))/(in_mRX - in_min)));
+	*/
+  	return ((((x - in_min)*(out_mRX - out_min))/(in_mRX - in_min)) + out_min);
+};

@@ -46,10 +46,8 @@ int main(int argc, char *argv[])
         printf("manda\n");
     }
     */
-
-    //pino.start();
+    pino.start();
     sleep(1);
-    //pino.pin(1);
 
     if(argc==1)
     {
@@ -66,30 +64,53 @@ int main(int argc, char *argv[])
         //servo.setTorque(1,0);
         //sleep(1);
         //printf("torque,valor\n");
-        //servo.setServoTorque(1,atoi(argv[1]));
+        printf("movendo 1\n");
         servo.move(1,0);
         sleep(1);
         printf("pos(%d)=%d\n",1,servo.readPosition(1) );
         usleep(1000);
         printf("pos(%d)=%d\n",2,servo.readPosition(2) );
+        printf("movendo 2\n");
         servo.move(2,0);
         sleep(1);
+        printf("movendo 1\n");
         servo.move(1,350);
         usleep(1000);
         printf("pos(%d)=%d\n",1,servo.readPosition(1) );
         usleep(1000);
+        printf("movendo 2\n");
         servo.move(2,350);
         usleep(1000);
         printf("pos(%d)=%d\n",2,servo.readPosition(2) );
         sleep(3);
+        printf("movendo 1\n");
         servo.move(1,200);
         usleep(1000);
         printf("pos(%d)=%d\n",1,servo.readPosition(1) );
         usleep(1000);
+        printf("movendo 2\n");
         servo.move(2,200);
         usleep(1000);
         printf("pos(%d)=%d\n",2,servo.readPosition(2) );
         sleep(3);
+        return 0;
+    }
+    else
+    {
+        
+        while(1)
+        {
+            printf("pos(%d)=%d\n",2,servo.readPosition(2) );
+            //sleep(1);
+            servo.setLed(2,0);
+            sleep(1);
+            servo.setLed(2,1);
+            sleep(1);
+        }
+        
+        //servo.move(2,atoi(argv[1]));
+        //sleep(1);
+        //printf("pos(%d)=%d\n",2,servo.readPosition(2) );
         return 0;
     }
     /*
