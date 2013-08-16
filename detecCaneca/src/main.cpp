@@ -79,7 +79,7 @@ rgb value;              /*rgb*/
 rgb valueh;             /*hsv*/
 infoImg localCan;       /*info of imag process*/
 bool matlabBool=false;  /*boolean to control Matlab functions*/
-bool boolShow=true;    /*boolean to control show image*/
+bool boolShow=false;    /*boolean to control show image*/
 bool boolPrint=false;    /*boolean to printf control*/
 Cronometer crono;       /*cronometer 1*/
 Cronometer crono2;      /*cronometer 2*/
@@ -257,8 +257,10 @@ infoImg lata_x(Mat image)
     	if((int)mu[i].m00!=0)
     	{
             max_area=contourArea(contours[i])+max_area;
+            drawCross ( cvPoint((int)mu[i].m10/(int)mu[i].m00,(int)mu[i].m01/(int)mu[i].m00),Scalar(0,0,255), 5, image); //debug counters
             soma_x=((int)mu[i].m10/(int)mu[i].m00)*contourArea(contours[i])+soma_x;
             soma_y=((int)mu[i].m01/(int)mu[i].m00)*contourArea(contours[i])+soma_y;
+            printf("(x,y) (%d,%d)\n",(int)mu[i].m10/(int)mu[i].m00,(int)mu[i].m01/(int)mu[i].m00);
     	}
 
     soma_x=soma_x/max_area;
@@ -318,6 +320,12 @@ infoImg lata_x(Mat image)
         printf("center>>%d,%d<<\n",infoImg.x,infoImg.y);
         printf("<><><><><><><><><><><>\n\n");
     }
+    
+    //debug para os counters
+    namedWindow("rgb", CV_WINDOW_FREERATIO);
+    imshow("rgb",image);
+    waitKey(30);
+
     return infoImg;
 }
 

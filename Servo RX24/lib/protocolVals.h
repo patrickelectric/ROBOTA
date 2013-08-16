@@ -102,12 +102,12 @@
 #define RX_START                    255
 #define BUFFER_SIZE		            64
 #define TIME_OUT                    10
-#define TX_DELAY_TIME		       600 //160
+#define TX_DELAY_TIME		       3500 //160 //600
  
 #define RX_DC_CW                    1
 #define RX_DC_CCW                   0
 
-#define delay_read 2800
+#define delay_read 3500
 
 void printMemoria(unsigned int memoria)           //function to print val in binario                                 
 {

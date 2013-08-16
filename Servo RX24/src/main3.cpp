@@ -27,8 +27,8 @@ int main(int argc, char *argv[])
     if(argc<3) printf("Foi escolhido a porta /dev/ttyO2, ja que não foi colocado nenhum argumento\n");
     else
     {
-        printf("Padrão /dev/ttyO2 57600\n\n");
-        Serial.local_usb=argv[1];
+    	printf("Padrão /dev/ttyO2 57600\n\n");
+    	Serial.local_usb=argv[1];
         Serial.baudrate=atoi(argv[2]);
         printf("\nPorta ""%s"" com o baudrate de %d,mensagem: %s\n\n",Serial.local_usb,Serial.baudrate,Serial.mensagem);
     }
