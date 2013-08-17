@@ -18,25 +18,16 @@
 
 #define PTHREAD_THREADS_MAX 1024    //define o max de threads
 
-/************************************************/  //define a direção 
-/*
-# 0* = tras
-# 1* = frente
-# 2* = esquerda
-# 3* = direita
-# * = potencia
-*/
-
-#define direita  30                 
-#define esquerda  20
-#define frente  13
+/********************DEBUG*******************/
+bool matlabBool=false;  /*boolean to control Matlab functions*/
+bool boolShow=true;    /*boolean to control show image*/
+bool boolPrint=false;    /*boolean to printf control*/
+/********************DEBUG*******************/
 
 int potencia=5;
 int last_msg; //ultima mensagem enviada pela serial
 
 using namespace cv;
-
-char programName[64]="main.cpp"; /* program name */
 
 
 /************************************************/  //variaveis de imagem global
@@ -78,9 +69,6 @@ infoImg lata_x(Mat image);              //funcao que recebe a imagem do filtro f
 rgb value;              /*rgb*/
 rgb valueh;             /*hsv*/
 infoImg localCan;       /*info of imag process*/
-bool matlabBool=false;  /*boolean to control Matlab functions*/
-bool boolShow=false;    /*boolean to control show image*/
-bool boolPrint=false;    /*boolean to printf control*/
 Cronometer crono;       /*cronometer 1*/
 Cronometer crono2;      /*cronometer 2*/
 char text[20];          /*text to make some functions*/
@@ -108,7 +96,7 @@ int main(int argc, char *argv[])
         }
     }
     else
-        for(int i=0;i<3;i++)
+        for(int i=0;i<1;i++)
             {
                 printf("adicionne argument to use matlab\n");
                 printf("Matlab recorder OFF : %d s\n",3-i);
@@ -135,6 +123,7 @@ int main(int argc, char *argv[])
                 {
                     printf("IMAGE SHOW OFF : %d s\n",3-i);
                     sleep(1);   
+                    i=3;
                 }
             }
 
@@ -180,8 +169,21 @@ void *thread_leControle(void *)
         pthread_mutex_lock(&emvetor);
         vetorControle = vetorAnalise;
         pthread_mutex_unlock(&emvetor);
-        printf("controle : %f,%f\n",vetorControle.angulo,vetorControle.modulo);
-        sleep(1);
+        //float linear = abs(vetorControle.modulo*cos(vetorControle.angulo*pi/180));
+        //float angular = 2*vetorControle.modulo*sin(vetorControle.angulo*pi/180);
+        //setVW(linear,angular);
+        if(vetorControle.modulo>0.27)
+            if(abs(vetorControle.angulo)<30)  setVW(0.25,0);
+            else
+            {
+                if(vetorControle.angulo<0)  setVW(0,0.6);
+                else    setVW(0,-0.6);
+            }
+        else    etVW(0,0);
+        printf("controle : theta : %f, modulo : %f\n",vetorControle.angulo,vetorControle.modulo);
+        //printf("controle : Vangular : %f, Vlinear : %f\n",angular,linear);
+
+        usleep(120000);
     }
 
     return 0;
@@ -248,6 +250,7 @@ infoImg lata_x(Mat image)
 
 
     float max_area=0.0;
+
     //int can_i=0;
     int soma_x=0;
     int soma_y=0;
@@ -260,7 +263,7 @@ infoImg lata_x(Mat image)
             drawCross ( cvPoint((int)mu[i].m10/(int)mu[i].m00,(int)mu[i].m01/(int)mu[i].m00),Scalar(0,0,255), 5, image); //debug counters
             soma_x=((int)mu[i].m10/(int)mu[i].m00)*contourArea(contours[i])+soma_x;
             soma_y=((int)mu[i].m01/(int)mu[i].m00)*contourArea(contours[i])+soma_y;
-            printf("(x,y) (%d,%d)\n",(int)mu[i].m10/(int)mu[i].m00,(int)mu[i].m01/(int)mu[i].m00);
+            //printf("(x,y) (%d,%d)\n",(int)mu[i].m10/(int)mu[i].m00,(int)mu[i].m01/(int)mu[i].m00);
     	}
 
     soma_x=soma_x/max_area;
@@ -277,9 +280,11 @@ infoImg lata_x(Mat image)
     }
     else
     {
-        soma_x=infoImg.x=image.cols/2;
-        soma_y=infoImg.y=image.rows/2;
+        soma_x=0;
+        soma_y=0;
         infoImg.erro=0;
+        infoImg.x=image.cols/2;
+        infoImg.y=image.rows;
     }
     
     /* implementacao do filtro e primeiro grau */
@@ -322,9 +327,9 @@ infoImg lata_x(Mat image)
     }
     
     //debug para os counters
-    namedWindow("rgb", CV_WINDOW_FREERATIO);
-    imshow("rgb",image);
-    waitKey(30);
+    //namedWindow("rgb", CV_WINDOW_FREERATIO);
+    //imshow("rgb",image);
+    //waitKey(30);
 
     return infoImg;
 }
@@ -438,7 +443,9 @@ void *filter_leanalise (void *)
         pthread_mutex_lock(&emvetor);
         vetorAnalise.modulo = sqrt( pow(localCan.x-copyFrame.cols/2,2) + pow(copyFrame.rows-localCan.y,2));
         vetorAnalise.modulo = fmap(vetorAnalise.modulo,0,289,0,1);
-        vetorAnalise.angulo = atan(-(copyFrame.cols/2-localCan.x+0.0000000001)/(copyFrame.rows-localCan.y+0.0000000001))*180/pi;
+        if(vetorAnalise.modulo>0.05) 
+            vetorAnalise.angulo = atan(-(copyFrame.cols/2-localCan.x+0.0000000001)/(copyFrame.rows-localCan.y+0.0000000001))*180/pi;
+        else vetorAnalise.angulo = 0.0;
         pthread_mutex_unlock(&emvetor);
         
         /*
