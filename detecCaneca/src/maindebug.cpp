@@ -49,7 +49,7 @@ int main(int argc, char *argv[])
     /************************************************/
     //Serial.local_usb="/dev/ttyUSB0"; /* set variable of usb local*/
     //Serial.mensagem="";              /* make a empty msg */
-	dataRGB.setFilename("results.dat");
+	dataRGB.setFilename((char*)"results.dat");
     if(argc<2) 
     {
     	printf("\nFoi escolhido debugProgram=true, pois é um programa de debug.\n");

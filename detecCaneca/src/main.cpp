@@ -78,7 +78,7 @@ vetor vetorAnalise;
 /**********************MAIN**********************/
 int main(int argc, char *argv[])
 {
-    dataRGB.setFilename("results.dat");
+    dataRGB.setFilename((char*)"results.dat");
     mega.begin(9600,"/dev/ttyACM0");//inicia a comunicacao serial
     usleep(10);                     //espeta a comunicacao ser feita
 
@@ -87,46 +87,36 @@ int main(int argc, char *argv[])
 
 	setInitParameters();           
 
-    if (argc == 2)                  /*if argument exist run matlaab recorder*/
-    {
-        matlabBool=true;
-        for(int i=0;i<3;i++)
+
+    for(int i=0;i<1;i++)
         {
-            printf("Matlab recorder ON : %d s\n",3-i);
-            sleep(1);
-        }
-    }
-    else
-        for(int i=0;i<1;i++)
+            if(matlabBool)
             {
-                printf("adicionne argument to use matlab\n");
-                printf("Matlab recorder OFF : %d s\n",3-i);
+                printf("Matlab recorder ON : %d s\n",i);
                 sleep(1);
             }
-
-    if (argc == 3)                  /*if 2 arguments not show image*/
-    {
-        for(int i=0;i<3;i++)
-        {
-            printf("IMAGE SHOW OFF : %d s\n",3-i);
-            sleep(1);
-        }
-    }
-    else
-        for(int i=0;i<3;i++)
+            else
             {
-                if(boolShow)
-                {
-                    printf("IMAGE SHOW ON : %d s\n",3-i);
-                    sleep(1);
-                }
-                else
-                {
-                    printf("IMAGE SHOW OFF : %d s\n",3-i);
-                    sleep(1);   
-                    i=3;
-                }
+                printf("Matlab recorder OFF : %d s\n",i);
+                sleep(1);   
+                i=3;
             }
+        }
+
+    for(int i=0;i<3;i++)
+        {
+            if(boolShow)
+            {
+                printf("IMAGE SHOW ON : %d s\n",3-i);
+                sleep(1);
+            }
+            else
+            {
+                printf("IMAGE SHOW OFF : %d s\n",3-i);
+                sleep(1);   
+                i=3;
+            }
+        }
 
 
    	dataRGB.read(); //le o results.dat

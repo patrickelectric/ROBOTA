@@ -43,7 +43,7 @@ class data
  //private:
  public:
   char* fileName;  //guarda o nome do arquivo  //="results.dat"
-  void setFilename(char dataname[])
+  void setFilename(char* dataname)
   {
     fileName=dataname;
   }
