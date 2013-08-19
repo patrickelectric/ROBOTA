@@ -49,12 +49,12 @@ int main(int argc, char *argv[])
     /************************************************/
     //Serial.local_usb="/dev/ttyUSB0"; /* set variable of usb local*/
     //Serial.mensagem="";              /* make a empty msg */
-	
+	dataRGB.setFilename("results.dat");
     if(argc<2) 
     {
     	printf("\nFoi escolhido debugProgram=true, pois é um programa de debug.\n");
-    	printf("Foi lido o arquivo %s para ter os valores rgb para filtrar.\n",fileName);
-    	data.read();
+    	printf("Foi lido o arquivo %s para ter os valores rgb para filtrar.\n",dataRGB.fileName);
+    	dataRGB.read();
     }
     else
     {
@@ -85,7 +85,7 @@ int main(int argc, char *argv[])
 
 	setInitParameters();
 
-   	data.read(); /* read last data of rgb and hsv */
+   	dataRGB.read(); /* read last data of rgb and hsv */
     bool erro_data=false;
 
     for (int i = 0; i < 6; ++i)
@@ -108,7 +108,7 @@ int main(int argc, char *argv[])
 	    cap >> frame;
         end_fps();
 	    if(debugProgram==true)
-	    	data.write(val);
+	    	dataRGB.write(val);
 		GaussianBlur(frame,frame,Size(11,11),0,0,BORDER_DEFAULT); /* gausian filter */
         
 	   	showimg(frame,"rgb");

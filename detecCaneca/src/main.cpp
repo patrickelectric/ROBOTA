@@ -78,6 +78,7 @@ vetor vetorAnalise;
 /**********************MAIN**********************/
 int main(int argc, char *argv[])
 {
+    dataRGB.setFilename("results.dat");
     mega.begin(9600,"/dev/ttyACM0");//inicia a comunicacao serial
     usleep(10);                     //espeta a comunicacao ser feita
 
@@ -128,9 +129,7 @@ int main(int argc, char *argv[])
             }
 
 
-   	data.read(); //le o results.dat
-    if(checkFile(file,fileName))    //f data doesnt exist return the number of the beast
-        return 666;
+   	dataRGB.read(); //le o results.dat
     
    	valtovalue();
 
@@ -179,7 +178,7 @@ void *thread_leControle(void *)
                 if(vetorControle.angulo<0)  setVW(0,0.6);
                 else    setVW(0,-0.6);
             }
-        else    etVW(0,0);
+        else    setVW(0,0);
         printf("controle : theta : %f, modulo : %f\n",vetorControle.angulo,vetorControle.modulo);
         //printf("controle : Vangular : %f, Vlinear : %f\n",angular,linear);
 

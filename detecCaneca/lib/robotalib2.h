@@ -23,3 +23,5 @@
 #include "robotaMatlab.h"
 #include "filtro.h"
 #include "serialTest.cpp"
+
+using namespace std;
