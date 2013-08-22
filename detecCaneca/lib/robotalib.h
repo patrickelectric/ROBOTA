@@ -27,7 +27,7 @@
 using namespace std;
 
 //VideoCapture cap("/home/patrick/Área de Trabalho/Dropbox/Bolsa/Fluxo optico/Programas/video3.mp4");                /* declare video capture */
-VideoCapture cap(0);
+VideoCapture cap(1);
 
 struct vetor
 {
