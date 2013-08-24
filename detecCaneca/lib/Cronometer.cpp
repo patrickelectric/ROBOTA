@@ -10,8 +10,8 @@ using namespace std;
 
 
 
-void Cronometer::init(char *Name){
-  	cronoName = Name;
+void Cronometer::init(char *cronoName){
+  	this->cronoName=cronoName;
   	cronoTimeElapsed = 0;
   	cronoActive = 0;
   	freqActive = 0;
