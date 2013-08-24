@@ -119,10 +119,12 @@ void *filter_leanalise (void *)
                 line( color_dst, Point(lines[i][0], lines[i][1]),
                     Point(lines[i][2], lines[i][3]), Scalar(0,0,255), 3, 8 );
             }
+
         #endif
         namedWindow( "Source", 1 );
         imshow( "Source", src );
-
+        namedWindow( "dst", 1 );
+        imshow( "dst", dst );
         namedWindow( "Detected Lines", 1 );
         imshow( "Detected Lines", color_dst );
 

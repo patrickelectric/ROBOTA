@@ -49,7 +49,14 @@ int main(int argc, char *argv[])
     /************************************************/
     //Serial.local_usb="/dev/ttyUSB0"; /* set variable of usb local*/
     //Serial.mensagem="";              /* make a empty msg */
-	dataRGB.setFilename((char*)"results.dat");
+    if(argc<2)
+    {
+        printf("Adicione como argumento o nome do arquivo para salvar os parametros de rgb e hsv:\nEx: %s results.dat",argv[0]);
+        return 0;
+    }
+    else
+        printf("Salvando dados no arquivo: %s\n",argv[1] );
+	dataRGB.setFilename(argv[1]);
     if(argc<2) 
     {
     	printf("\nFoi escolhido debugProgram=true, pois é um programa de debug.\n");
