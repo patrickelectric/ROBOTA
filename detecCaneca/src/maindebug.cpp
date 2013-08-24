@@ -51,7 +51,7 @@ int main(int argc, char *argv[])
     //Serial.mensagem="";              /* make a empty msg */
     if(argc<2)
     {
-        printf("Adicione como argumento o nome do arquivo para salvar os parametros de rgb e hsv:\nEx: %s results.dat",argv[0]);
+        printf("Adicione como argumento o nome do arquivo para salvar os parametros de rgb e hsv:\nEx: %s results.dat\n",argv[0]);
         return 0;
     }
     else

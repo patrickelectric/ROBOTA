@@ -78,7 +78,16 @@ vetor vetorAnalise;
 /**********************MAIN**********************/
 int main(int argc, char *argv[])
 {
-    dataRGB.setFilename((char*)"results.dat");
+     if(argc<2)
+    {
+        printf("Adicione como argumento o nome do arquivo para abrir os parametros de rgb e hsv:\nEx: %s results.dat\n",argv[0]);
+        sleep(1);
+        return 0;
+    }
+    else
+        printf("Abrindo dados no arquivo: %s\n",argv[1] );
+    sleep(1);
+    dataRGB.setFilename((char*)argv[1]);
     mega.begin(9600,"/dev/ttyACM0");//inicia a comunicacao serial
     usleep(10);                     //espeta a comunicacao ser feita
 
@@ -337,6 +346,7 @@ void *streaming( void *)        /*take image from camera and make atualization o
     {
         pthread_mutex_lock(&emframe);
         cap >> frame;
+        //GaussianBlur(frame,frame,Size(11,11),0,0,BORDER_DEFAULT); /* gausian filter */
         Size s( frame.size().width / 2, frame.size().height / 2 );
         resize( frame, frame, s, 0, 0, CV_INTER_AREA );
         pthread_mutex_unlock(&emframe);

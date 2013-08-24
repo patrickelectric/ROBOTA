@@ -55,7 +55,7 @@ void *streaming( void *)        /*take image from camera and make atualization o
     if(!cap.isOpened()) {puts("can't open camera!!");}
     Cronometer crono;       /*cronometer 1*/
     crono.startFreq();
-    crono.init("Streaming");
+    crono.init((char*)"Streaming");
     while(1)
     {
         pthread_mutex_lock(&emframe);
