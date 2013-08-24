@@ -92,9 +92,9 @@ int main(int argc, char *argv[])
     usleep(10);                     //espeta a comunicacao ser feita
 
 
-    start_fps();					//inicia a captura do fps
+    start_fps();                    //inicia a captura do fps
 
-	setInitParameters();           
+    setInitParameters();           
 
 
     for(int i=0;i<1;i++)
@@ -128,9 +128,9 @@ int main(int argc, char *argv[])
         }
 
 
-   	dataRGB.read(); //le o results.dat
+    dataRGB.read(); //le o results.dat
     
-   	valtovalue();
+    valtovalue();
 
     /********************************************/
     
@@ -193,40 +193,40 @@ void *thread_leControle(void *)
 
 void takeOriginal_RgbTrack()
 {
-	if((value.b>=colorRange && value.g>=colorRange && value.r>=colorRange)&&(value.b<=230 && value.g<=230 && value.r<=230))
-		inRange(frame, Scalar(value.b-25, value.g-25, value.r-25), Scalar(value.b+25, value.g+25, value.r+25), resposta_frame);
-	else resposta_frame=frame;
+    if((value.b>=colorRange && value.g>=colorRange && value.r>=colorRange)&&(value.b<=230 && value.g<=230 && value.r<=230))
+        inRange(frame, Scalar(value.b-25, value.g-25, value.r-25), Scalar(value.b+25, value.g+25, value.r+25), resposta_frame);
+    else resposta_frame=frame;
 }
 /************************************************/
 
 void takeHsv_RgbTrack()
 {
-	if((valueh.b>=25 && valueh.g>=25 && valueh.r>=25)&&(valueh.b<=230 && valueh.g<=230 && valueh.r<=230))
-		inRange(frame_hsv, Scalar(valueh.b-25, valueh.g-25, valueh.r-25), Scalar(valueh.b+25, valueh.g+25, valueh.r+25),resposta_hsv);
-	else resposta_hsv=frame_hsv;
+    if((valueh.b>=25 && valueh.g>=25 && valueh.r>=25)&&(valueh.b<=230 && valueh.g<=230 && valueh.r<=230))
+        inRange(frame_hsv, Scalar(valueh.b-25, valueh.g-25, valueh.r-25), Scalar(valueh.b+25, valueh.g+25, valueh.r+25),resposta_hsv);
+    else resposta_hsv=frame_hsv;
 }
 /************************************************/
 
 void printfval()
 {
-	printf("vals:%d,%d,%d,%d,%d,%d\n",val[0],val[1],val[2],val[3],val[4],val[5]);
+    printf("vals:%d,%d,%d,%d,%d,%d\n",val[0],val[1],val[2],val[3],val[4],val[5]);
 }
 /************************************************/
 
 void valtovalue()
 {
-	value.r=val[0];
-   	value.g=val[1];
-   	value.b=val[2];
-   	valueh.r=val[3];
-   	valueh.g=val[4];
-   	valueh.b=val[5];
+    value.r=val[0];
+    value.g=val[1];
+    value.b=val[2];
+    valueh.r=val[3];
+    valueh.g=val[4];
+    valueh.b=val[5];
 }
 /************************************************/
 
 infoImg lata_x(Mat image)
 {
-	infoImg infoImg;                                        //inicia os parametros para guardar as informações dala
+    infoImg infoImg;                                        //inicia os parametros para guardar as informações dala
     vector<vector<Point> > contours;
     Canny( image, image, image.rows, image.cols, 3 );       //encontra os contornos da imagem
     vector<Vec4i> hierarchy;                                //
@@ -253,16 +253,20 @@ infoImg lata_x(Mat image)
     int soma_x=0;
     int soma_y=0;
 
-    /* calcula os minimos qudrados */
+    /* calcula os minimos qudrados */   
+    /*
+    x=(x1*(massa no ponto)/massa total)+....
+    y=(y1*(massa no ponto)/massa total)+....
+    */
     for (int i = 0; i <(int) contours.size(); i++)
-    	if((int)mu[i].m00!=0)
-    	{
+        if((int)mu[i].m00!=0 && contourArea(contours[i])>10)
+        {
             max_area=contourArea(contours[i])+max_area;
             drawCross ( cvPoint((int)mu[i].m10/(int)mu[i].m00,(int)mu[i].m01/(int)mu[i].m00),Scalar(0,0,255), 5, image); //debug counters
             soma_x=((int)mu[i].m10/(int)mu[i].m00)*contourArea(contours[i])+soma_x;
             soma_y=((int)mu[i].m01/(int)mu[i].m00)*contourArea(contours[i])+soma_y;
             //printf("(x,y) (%d,%d)\n",(int)mu[i].m10/(int)mu[i].m00,(int)mu[i].m01/(int)mu[i].m00);
-    	}
+        }
 
     soma_x=soma_x/max_area;
     soma_y=soma_y/max_area;
@@ -582,5 +586,4 @@ void *filter_leanalise (void *)
     }
     return 0;
 }
-
 
